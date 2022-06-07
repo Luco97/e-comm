@@ -24,7 +24,16 @@
 
 ## Description
 
-E-commerce basico utilizando NestJS framework como Back-end
+E-commerce basico utilizando NestJS framework como Back-end, las herramientas utilizadas son:
+
+- PostgreSQL como base de datos.
+  - Usando TypeORM.
+- JWT para la autenticacion.
+- Y mas ... (ya sabre que chamullar)
+
+### Diagrama E-R
+
+<img src="https://cdn.discordapp.com/attachments/920746100464431144/983520898441179136/basic_e-comm_ER_diagram.png" alt="Diagrama E-R utilizado como referencia">
 
 ## Installation
 
