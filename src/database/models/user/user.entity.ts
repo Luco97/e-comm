@@ -51,11 +51,13 @@ export class UserEntity {
 
   @CreateDateColumn({
     name: 'created_at',
+    type: 'timestamp',
   })
   created_at: Date;
 
   @DeleteDateColumn({
     name: 'deleted_at',
+    type: 'timestamp',
     select: false,
   })
   deleted_at: Date;
