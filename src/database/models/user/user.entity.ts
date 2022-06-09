@@ -1,10 +1,17 @@
+import { genSalt, hash } from 'bcrypt';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  BeforeInsert,
+  BeforeUpdate,
+  ManyToOne,
 } from 'typeorm';
+import { OrderEntity } from '../order/order.entity';
+import { RoleEntity } from '../role/role.entity';
 
 @Entity({
   name: 'user',
@@ -49,6 +56,12 @@ export class UserEntity {
   })
   last_name: string;
 
+  @ManyToOne(() => RoleEntity, (role) => role.user)
+  role: RoleEntity;
+
+  @OneToMany(() => OrderEntity, (order) => order.user)
+  orders: OrderEntity[];
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
@@ -61,4 +74,13 @@ export class UserEntity {
     select: false,
   })
   deleted_at: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPass() {
+    if (!this.password) return;
+    const saltRound: number = 10;
+    const bcSaltRound = await genSalt(saltRound);
+    this.password = await hash(this.password, bcSaltRound);
+  }
 }
