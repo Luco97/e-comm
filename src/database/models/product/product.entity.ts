@@ -1,8 +1,13 @@
+import { OrderEntity } from '../order/order.entity';
+import { CategoryEntity } from '../category/category.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -54,6 +59,13 @@ export class ProductEntity {
     type: 'varchar',
   })
   name: string;
+
+  @ManyToMany(() => OrderEntity, (orders) => orders.products)
+  @JoinColumn()
+  orders: OrderEntity[];
+
+  @ManyToOne(() => CategoryEntity, (category) => category.products)
+  category: CategoryEntity;
 
   @CreateDateColumn({
     name: 'created_at',
