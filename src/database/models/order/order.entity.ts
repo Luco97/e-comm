@@ -35,7 +35,7 @@ export class OrderEntity {
   city: string;
 
   @Column({
-    name: 'city',
+    name: 'council',
     type: 'varchar',
   })
   council: string;
