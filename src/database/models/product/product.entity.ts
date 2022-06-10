@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -61,7 +61,7 @@ export class ProductEntity {
   name: string;
 
   @ManyToMany(() => OrderEntity, (orders) => orders.products)
-  @JoinColumn()
+  @JoinTable()
   orders: OrderEntity[];
 
   @ManyToOne(() => CategoryEntity, (category) => category.products)
