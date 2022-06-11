@@ -33,6 +33,13 @@ import { CategoryEntity } from './models/category/category.entity';
         logging: 'all',
       }),
     }),
+    TypeOrmModule.forFeature([
+      RoleEntity,
+      UserEntity,
+      OrderEntity,
+      ProductEntity,
+      CategoryEntity,
+    ]),
   ],
   exports: [
     CategoryEntityService,
