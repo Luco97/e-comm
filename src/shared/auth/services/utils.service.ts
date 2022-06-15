@@ -6,40 +6,38 @@ import { from, map, Observable } from 'rxjs';
 export class UtilsService {
   constructor(private _jwtService: JwtService) {}
 
-  genJWT(object: { uuid: string; name: string }): Observable<string> {
+  genJWT(object: { uuid: string; name: string }): string {
     const { uuid, name } = object;
-    return from(
-      this._jwtService.signAsync({
-        sub: name,
-        context: {
-          username: name,
-          extra: uuid,
-        },
-      }),
-    );
+    return this._jwtService.sign({
+      sub: name,
+      context: {
+        username: name,
+        extra: uuid,
+      },
+    });
   }
 
-  validateToken(token: string): Observable<boolean> {
-    return from(
-      this._jwtService.verifyAsync(token, { secret: process.env.SECRET_KEY }),
-    ).pipe(
-      map((validation) => {
-        if (validation?.context?.username && validation?.context?.extra)
-          return true;
-        return false;
-      }),
-    );
+  validateToken(token: string): boolean {
+    try {
+      const validation = this._jwtService.verify(token, {
+        secret: process.env.SECRET_KEY,
+      });
+      if (validation?.context?.username && validation?.context?.extra)
+        return true;
+    } catch (error) {
+      return false;
+    }
   }
 
-  userUuid(token: string): Observable<string> {
-    return from(
-      this._jwtService.verifyAsync(token, { secret: process.env.SECRET_KEY }),
-    ).pipe(
-      map((validation) => {
-        if (validation?.context?.username && validation?.context?.extra)
-          return validation?.context?.extra;
-        return '';
-      }),
-    );
+  userUuid(token: string): string {
+    try {
+      const payload = this._jwtService.verify(token, {
+        secret: process.env.SECRET_KEY,
+      });
+      if (payload?.context?.username && payload?.context?.extra)
+        return payload?.context?.extra;
+    } catch (error) {
+      return '';
+    }
   }
 }
