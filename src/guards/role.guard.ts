@@ -18,10 +18,10 @@ export class RoleGuard implements CanActivate {
     const req: Request = context.switchToHttp().getRequest();
     const roles = this._reflector.get<string[]>('roles', context.getHandler());
     if (!roles) return of(true);
-    const uuid: number = this._jwtSerivce.userUuid(
+    const uuid = this._jwtSerivce.userUuid(
       req.headers.authorization?.replace(/Bearer /g, ''),
     );
-    // console.log('----> ', roles, ' ---> [', uuid, ']');
+    // console.log('----> ', roles, ' ---> [', uuid, ']'); 
     const ObsArray: Observable<boolean>[] = [];
     roles.forEach((role) => {
       ObsArray.push(

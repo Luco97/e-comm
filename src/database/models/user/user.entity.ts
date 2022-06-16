@@ -25,6 +25,7 @@ export class UserEntity {
   @Column({
     name: 'image_src',
     type: 'varchar',
+    nullable: true,
   })
   image_src: string;
 
@@ -32,7 +33,6 @@ export class UserEntity {
     name: 'password',
     type: 'varchar',
     nullable: false,
-    select: false,
   })
   password: string;
 
@@ -52,6 +52,7 @@ export class UserEntity {
 
   @Column({
     name: 'last_name',
+    nullable: true,
     type: 'varchar',
   })
   last_name: string;
@@ -76,7 +77,6 @@ export class UserEntity {
   deleted_at: Date;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async hashPass() {
     if (!this.password) return;
     const saltRound: number = 10;

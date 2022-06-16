@@ -37,7 +37,7 @@ export class UtilsService {
       if (payload?.context?.username && payload?.context?.extra)
         return payload?.context?.extra;
     } catch (error) {
-      return '';
+      return '00000000-0000-0000-0000-000000000000';
     }
   }
 }
