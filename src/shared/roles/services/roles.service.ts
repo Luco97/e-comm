@@ -10,7 +10,7 @@ export class RolesService {
     private _roleRepo: Repository<RoleEntity>,
   ) {}
 
-  findByRole(type: string, uuid: number) {
+  findByRole(type: string, uuid: string) {
     try {
       return this._roleRepo
         .createQueryBuilder('role')
