@@ -40,7 +40,7 @@ export class UserService {
       uuid,
       name,
       password: userHash,
-    } = await this._userEntityService.findMail(email);
+    } = await this._userEntityService.findUser(email);
     if (!uuid) return { status: HttpStatus.OK, message: 'invalid credentials' };
     const passCompare = await compare(password, userHash);
     if (!passCompare)

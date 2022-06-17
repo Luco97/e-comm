@@ -26,6 +26,14 @@ export class UserEntityService {
   findMail(email: string): Promise<UserEntity> {
     return this._userRepo
       .createQueryBuilder('user')
+      .select(['user.email'])
+      .where('user.email = :email', { email })
+      .getOne();
+  }
+  findUser(email: string): Promise<UserEntity> {
+    return this._userRepo
+      .createQueryBuilder('user')
+      .select(['user.uuid', 'user.email', 'user.password', 'user.name'])
       .where('user.email = :email', { email })
       .getOne();
   }
