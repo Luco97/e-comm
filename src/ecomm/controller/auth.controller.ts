@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { tap, from } from 'rxjs';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 import { response } from '../interfaces/response';
 import { UserService } from '../services/user.service';
 
