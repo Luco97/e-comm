@@ -1,11 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class Update {
-  @IsNotEmpty()
-  @IsString()
-  @Length(6)
-  password: string;
-
   @IsNotEmpty()
   @IsString()
   name: string;
