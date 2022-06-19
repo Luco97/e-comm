@@ -9,6 +9,6 @@ async function bootstrap() {
     exclude: [{ method: RequestMethod.GET, path: '' }],
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(port);
 }
 bootstrap();
