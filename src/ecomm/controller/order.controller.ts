@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Res,
@@ -13,12 +14,16 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { response } from '../interfaces/response';
-import { ParseIntPipe } from '../pipes/parse-int.pipe';
+import { ParseDefaultIntPipe } from '../pipes/parse-int.pipe';
 import { RoleGuard } from '../../guards/role.guard';
 import { Create } from '@ecomm/dtos/order';
+import { OrderService } from '../services/order.service';
+import { from, tap } from 'rxjs';
 
 @Controller('order')
 export class OrderController {
+  constructor(private _ordersService: OrderService) {}
+
   @Get()
   @SetMetadata('roles', ['admin', 'basic'])
   @UseGuards(RoleGuard)
@@ -26,8 +31,8 @@ export class OrderController {
     @Headers('authorization') token: string,
     @Query('orderBy') orderBy: string,
     @Query('order') order: string,
-    @Query('take', new ParseIntPipe(10)) take: number,
-    @Query('skip', new ParseIntPipe(0)) skip: number,
+    @Query('take', new ParseDefaultIntPipe(10)) take: number,
+    @Query('skip', new ParseDefaultIntPipe(0)) skip: number,
     @Res() resp: Response<response>,
   ) {
     const parameters: {
@@ -45,10 +50,14 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    console.log(token.replace(/Bearer /g, ''));
-    resp
-      .status(200)
-      .json({ status: 200, message: 'object', response: parameters });
+    from(
+      this._ordersService.getAllOrders(
+        parameters,
+        token.replace(/Bearer /g, ''),
+      ),
+    )
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
   }
 
   @Get('admin')
@@ -57,8 +66,8 @@ export class OrderController {
   allOrdersAdmin(
     @Query('orderBy') orderBy: string,
     @Query('order') order: string,
-    @Query('take', new ParseIntPipe(10)) take: number,
-    @Query('skip', new ParseIntPipe(0)) skip: number,
+    @Query('take', new ParseDefaultIntPipe(10)) take: number,
+    @Query('skip', new ParseDefaultIntPipe(0)) skip: number,
     @Res() resp: Response<response>,
   ) {
     const parameters: {
