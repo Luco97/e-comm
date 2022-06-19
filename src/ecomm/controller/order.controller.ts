@@ -12,13 +12,15 @@ import {
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { response } from '../interfaces/response';
-import { ParseDefaultIntPipe } from '../pipes/parse-int.pipe';
-import { RoleGuard } from '../../guards/role.guard';
-import { Create } from '@ecomm/dtos/order';
-import { OrderService } from '../services/order.service';
 import { from, tap } from 'rxjs';
+import { Response } from 'express';
+
+import { Create } from '@ecomm/dtos/order';
+import { response } from '../interfaces/response';
+import { RoleGuard } from '../../guards/role.guard';
+import { Token } from '../decorators/token.decorator';
+import { OrderService } from '../services/order.service';
+import { ParseDefaultIntPipe } from '../pipes/parse-int.pipe';
 
 @Controller('order')
 export class OrderController {
@@ -28,7 +30,7 @@ export class OrderController {
   @SetMetadata('roles', ['admin', 'basic'])
   @UseGuards(RoleGuard)
   allOrdersFromUser(
-    @Headers('authorization') token: string,
+    @Token() token: string,
     @Query('orderBy') orderBy: string,
     @Query('order') order: string,
     @Query('take', new ParseDefaultIntPipe(10)) take: number,
@@ -50,12 +52,7 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    from(
-      this._ordersService.getAllOrders(
-        parameters,
-        token.replace(/Bearer /g, ''),
-      ),
-    )
+    from(this._ordersService.getAllOrders(parameters, token))
       .pipe(tap((data) => resp.status(data.status).json(data)))
       .subscribe();
   }
