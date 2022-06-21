@@ -1,8 +1,20 @@
-import { IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsDefined,
+  IsInt,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
 export class Create {
-  @IsNumber({}, { each: true })
-  products: number[];
+  @ArrayNotEmpty()
+  @ArrayMinSize(1)
+  @ValidateNested()
+  @Type(() => Product)
+  products: Product[];
 
   @IsString()
   city: string;
@@ -12,4 +24,15 @@ export class Create {
 
   @IsString()
   council: string;
+}
+
+class Product {
+  @IsDefined()
+  @IsInt()
+  product_id: number;
+
+  @IsDefined()
+  @IsInt()
+  @Min(1)
+  quantity: number;
 }
