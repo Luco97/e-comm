@@ -1,4 +1,4 @@
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './product.entity';
@@ -20,7 +20,7 @@ export class ProductEntityService {
     order: 'ASC' | 'DESC';
     take: number;
     skip: number;
-  }) {
+  }): Promise<[ProductEntity[], number]> {
     const { orderBy, order, skip, take } = parameters;
     return this._productRepo
       .createQueryBuilder('products')
@@ -39,7 +39,7 @@ export class ProductEntityService {
       skip: number;
     },
     category_id: number,
-  ) {
+  ): Promise<[ProductEntity[], number]> {
     const { orderBy, order, skip, take } = parameters;
     return this._productRepo
       .createQueryBuilder('products')
@@ -51,7 +51,25 @@ export class ProductEntityService {
       .getManyAndCount();
   }
 
-  delete(id: number) {
+  findOne(id: number, stock?: number): Promise<ProductEntity> {
+    const QB = this._productRepo
+      .createQueryBuilder('product')
+      .innerJoinAndSelect('product.category', 'category');
+    if (stock >= 0)
+      QB.where('product.id = :id AND product.stock >= :stock', { id, stock });
+    else QB.where('product.id = :id', { id });
+    return QB.getOne();
+  }
+
+  delete(id: number): Promise<UpdateResult> {
     return this._productRepo.softDelete(id);
+  }
+
+  update(product: ProductEntity): Promise<ProductEntity> {
+    return this._productRepo.save(product);
+  }
+
+  updateAll(products: ProductEntity[]): Promise<ProductEntity[]> {
+    return this._productRepo.save(products);
   }
 }
