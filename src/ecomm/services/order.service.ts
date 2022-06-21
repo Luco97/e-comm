@@ -1,13 +1,18 @@
-import { OrderEntityService } from '@database/models/order';
 import { Injectable, HttpStatus } from '@nestjs/common';
+import { from, Observable, forkJoin, map, mergeMap } from 'rxjs';
+
+import { Create } from '@ecomm/dtos/order';
 import { UtilsService } from '@shared/auth';
 import { response } from '../interfaces/response';
+import { OrderEntityService } from '@database/models/order';
+import { ProductEntity, ProductEntityService } from '@database/models/product';
 
 @Injectable()
 export class OrderService {
   constructor(
     private _utilsService: UtilsService,
     private _orderEntityService: OrderEntityService,
+    private _productEntityService: ProductEntityService,
   ) {}
 
   async getAllOrders(
@@ -33,4 +38,41 @@ export class OrderService {
       },
     };
   }
+
+  processProducts(createOrder: Create) {
+    const findArray: Observable<ProductEntity>[] = [];
+    createOrder.products.forEach((product) => {
+      findArray.push(
+        from(
+          this._productEntityService.findOne(
+            product.product_id,
+            product.quantity,
+          ),
+        ),
+      );
+    });
+    return forkJoin(findArray).pipe(
+      map((data) => {
+        const index = data.findIndex((product) => !product);
+        return index >= 0
+          ? { products: data, message: 'conditions accepted' }
+          : {
+              products: [],
+              message: `product with id = '${createOrder.products[index]}' quantity is greater than the stock`,
+            };
+      }),
+      mergeMap(({ products, message }) => {
+        products.forEach((product, index) => {
+          product.stock -= createOrder.products[index].quantity;
+        });
+        return from(this._productEntityService.updateAll(products)).pipe(
+          map((products) => {
+            return { products, message };
+          }),
+        );
+      }),
+    );
+  }
+
+  createOrder(createOrder: Create) {}
 }
