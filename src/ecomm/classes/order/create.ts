@@ -26,7 +26,7 @@ export class Create {
   council: string;
 }
 
-class Product {
+export class Product {
   @IsDefined()
   @IsInt()
   product_id: number;
