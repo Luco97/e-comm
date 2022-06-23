@@ -1,5 +1,3 @@
-import { UserEntity } from '../user/user.entity';
-import { ProductEntity } from '../product/product.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Product } from '@ecomm/dtos/order';
+import { UserEntity } from '../user/user.entity';
+import { ProductEntity } from '../product/product.entity';
 
 @Entity({
   name: 'order',
@@ -53,6 +54,13 @@ export class OrderEntity {
     nullable: false,
   })
   status: number;
+
+  @Column({
+    name: 'details',
+    type: 'jsonb',
+    nullable: false,
+  })
+  details: Product[];
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user: UserEntity;
