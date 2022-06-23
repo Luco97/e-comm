@@ -1,5 +1,5 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { from, Observable, forkJoin, map, mergeMap } from 'rxjs';
+import { from, Observable, forkJoin, map, mergeMap, of } from 'rxjs';
 
 import { Create } from '@ecomm/dtos/order';
 import { UtilsService } from '@shared/auth';
@@ -55,21 +55,28 @@ export class OrderService {
       map((data) => {
         const index = data.findIndex((product) => !product);
         return index >= 0
-          ? { products: data, message: 'conditions accepted' }
+          ? {
+              products: data,
+              message: 'conditions accepted',
+              details: createOrder.products,
+            }
           : {
               products: [],
               message: `product with id = '${createOrder.products[index]}' quantity is greater than the stock`,
+              details: createOrder.products,
             };
       }),
-      mergeMap(({ products, message }) => {
-        products.forEach((product, index) => {
-          product.stock -= createOrder.products[index].quantity;
-        });
-        return from(this._productEntityService.updateAll(products)).pipe(
-          map((products) => {
-            return { products, message };
-          }),
-        );
+      mergeMap(({ products, message, details }) => {
+        if (products.length) {
+          products.forEach((product, index) => {
+            product.stock -= createOrder.products[index].quantity;
+          });
+          return from(this._productEntityService.updateAll(products)).pipe(
+            map((products) => {
+              return { products, message, details };
+            }),
+          );
+        } else return of({ products, message, details });
       }),
     );
   }
