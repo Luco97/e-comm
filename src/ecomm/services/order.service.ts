@@ -54,7 +54,7 @@ export class OrderService {
     return forkJoin(findArray).pipe(
       map((data) => {
         const index = data.findIndex((product) => !product);
-        return index >= 0
+        return index < 0
           ? {
               products: data,
               message: 'conditions accepted',
