@@ -19,8 +19,9 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@shared/*": ["src/shared/*"],
+      "@ecomm/dtos/*": ["src/ecomm/classes/*"],
+      "@ecomm/interfaces": ["src/ecomm/interfaces"],
       "@database/models/*": ["src/database/models/*"],
-      "@ecomm/dtos/*": ["src/ecomm/classes/*"]
     }
   }
 }
