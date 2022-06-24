@@ -1,9 +1,10 @@
 import { compare } from 'bcrypt';
 import { Injectable, HttpStatus } from '@nestjs/common';
+
 import { UtilsService } from '@shared/auth';
 import { Login, Sign } from '@ecomm/dtos/user';
+import { response } from '@ecomm/interfaces';
 import { Update } from '../classes/user/update';
-import { response } from '../interfaces/response';
 import { RoleEntityService } from '@database/models/role';
 import { UserEntityService } from '@database/models/user';
 
