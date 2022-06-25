@@ -55,9 +55,10 @@ export class ProductEntityService {
     const QB = this._productRepo
       .createQueryBuilder('product')
       .innerJoinAndSelect('product.category', 'category');
-    if (stock >= 0)
-      QB.where('product.id = :id AND product.stock >= :stock', { id, stock });
-    else QB.where('product.id = :id', { id });
+    // if (stock >= 0)
+    //   QB.where('product.id = :id AND product.stock >= :stock', { id, stock });
+    // else 
+      QB.where('product.id = :id', { id });
     return QB.getOne();
   }
 
