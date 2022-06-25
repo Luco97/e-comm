@@ -1,3 +1,3 @@
 export interface ProductJSON {
-  [key: number]: number;
+  [key: string]: number;
 }
