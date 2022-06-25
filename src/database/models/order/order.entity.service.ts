@@ -15,12 +15,16 @@ export class OrderEntityService {
     return this._orderRepo.save(order);
   }
 
+  async update(order: OrderEntity) {
+    return this._orderRepo.save(order);
+  }
+
   async createUserOrder(orderID: number, uuid: string) {
     return this._orderRepo
       .createQueryBuilder('order')
       .relation('user')
-      .of(uuid)
-      .set(orderID);
+      .of(orderID)
+      .set(uuid);
   }
 
   async createProductOrder(orderID: number, products_id: number[]) {
@@ -60,5 +64,4 @@ export class OrderEntityService {
       .where('order.id = :id', { id })
       .getOne();
   }
-
 }
