@@ -4,6 +4,9 @@ import {
   ArrayNotEmpty,
   IsDefined,
   IsInt,
+  IsLatitude,
+  IsLongitude,
+  IsNumber,
   IsString,
   Min,
   ValidateNested,
@@ -24,6 +27,14 @@ export class Create {
 
   @IsString()
   council: string;
+
+  @IsNumber()
+  @IsLatitude()
+  latitude: number;
+
+  @IsNumber()
+  @IsLongitude()
+  longitude: number;
 }
 
 export class Product {
