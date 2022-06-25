@@ -8,7 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Product } from '@ecomm/dtos/order';
+
+import { ProductJSON } from '@ecomm/interfaces';
 import { UserEntity } from '../user/user.entity';
 import { ProductEntity } from '../product/product.entity';
 
@@ -56,11 +57,25 @@ export class OrderEntity {
   status: number;
 
   @Column({
+    name: 'latitude',
+    type: 'float',
+    nullable: false,
+  })
+  latitude: number;
+
+  @Column({
+    name: 'longitude',
+    type: 'float',
+    nullable: false,
+  })
+  longitude: number;
+
+  @Column({
     name: 'details',
     type: 'jsonb',
     nullable: false,
   })
-  details: Product[];
+  details: ProductJSON;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user: UserEntity;
