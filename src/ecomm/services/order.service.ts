@@ -1,3 +1,4 @@
+import { UpdateResult } from 'typeorm';
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { from, Observable, forkJoin, map, mergeMap, of } from 'rxjs';
 
@@ -116,7 +117,11 @@ export class OrderService {
     const { address, city, council, latitude, longitude } = createOrder;
     const { details, message, products, extra } = process;
     if (!products.length)
-      return of({ status: 200, message, response: { details } });
+      return of({
+        status: HttpStatus.NOT_ACCEPTABLE,
+        message,
+        response: { details },
+      });
     else {
       const uuid: string = this._utilsService.userUuid(token);
       return from(
@@ -143,7 +148,7 @@ export class OrderService {
             from(this._orderEntityService.createProductOrder(order.id, extra)),
           ]).pipe(
             map(([orderInnerUser, orderInnerProduct]) => ({
-              status: 200,
+              status: HttpStatus.OK,
               message: 'Order created successfully',
               response: {
                 ...order,
@@ -154,5 +159,24 @@ export class OrderService {
         ),
       );
     }
+  }
+
+  deleteOrder(id: number): Observable<response> {
+    return from(this._orderEntityService.findOne(id)).pipe(
+      mergeMap((data) =>
+        data
+          ? from(this._orderEntityService.delete(id)).pipe(
+              map<UpdateResult, response>((resp) => ({
+                status: HttpStatus.OK,
+                message: `order soft deleted (bring order back cleaning deleted_at column of order with id = '${data.id}')`,
+                // response: data
+              })),
+            )
+          : of<response>({
+              status: HttpStatus.NOT_FOUND,
+              message: `order with id = '${id}' doesn't exist`,
+            }),
+      ),
+    );
   }
 }
