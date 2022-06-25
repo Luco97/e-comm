@@ -64,4 +64,8 @@ export class OrderEntityService {
       .where('order.id = :id', { id })
       .getOne();
   }
+
+  async delete(id: number) {
+    return this._orderRepo.softDelete(id);
+  }
 }
