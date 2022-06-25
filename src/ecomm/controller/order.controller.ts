@@ -12,11 +12,11 @@ import {
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
-import { from, tap } from 'rxjs';
+import { from, tap, mergeMap } from 'rxjs';
 import { Response } from 'express';
 
 import { Create } from '@ecomm/dtos/order';
-import { response } from '../interfaces/response';
+import { response } from '@ecomm/interfaces';
 import { RoleGuard } from '../../guards/role.guard';
 import { Token } from '../decorators/token.decorator';
 import { OrderService } from '../services/order.service';
@@ -99,7 +99,34 @@ export class OrderController {
   @Post()
   @SetMetadata('roles', ['admin', 'basic'])
   @UseGuards(RoleGuard)
-  createOrder(@Body() createBody: Create, @Res() resp: Response<response>) {}
+  async createOrder(
+    @Token() token: string,
+    @Body() createBody: Create,
+    @Res() resp: Response<response>,
+  ) {
+    // this._ordersService
+    //   .processProducts(createBody)
+    //   .pipe(
+    //     tap((data) =>
+    //       resp
+    //         .status(200)
+    //         .json({ status: 200, message: 'testing', response: data }),
+    //     ),
+    //   )
+    //   .subscribe((data) => console.log(data));
+    this._ordersService
+      .processProducts(createBody)
+      .pipe(
+        mergeMap((process) =>
+          this._ordersService.createOrder(token, createBody, process),
+        ),
+        tap((data) => {
+          console.log(data)
+          resp.status(data.status).json(data);
+        }),
+      )
+      .subscribe();
+  }
 
   @Delete(':id')
   @SetMetadata('roles', ['admin'])
