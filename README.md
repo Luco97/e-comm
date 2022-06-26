@@ -22,6 +22,10 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+<p align="center">
+  <a><img src="https://res.cloudinary.com/hicpcnwox/image/upload/v1652511156/manga-api-assets/Marca-background-red_iikp59.png" width="320" alt="Manga-api Logo" /></a>
+</p>
+
 ## Description
 
 E-commerce basico utilizando NestJS framework como Back-end, las herramientas utilizadas son:
