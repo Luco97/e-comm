@@ -5,18 +5,20 @@ import { from, Observable, forkJoin, map, mergeMap, of } from 'rxjs';
 import { Create } from '@ecomm/dtos/order';
 import { UtilsService } from '@shared/auth';
 import { ProductJSON, response } from '@ecomm/interfaces';
-import { OrderEntityService } from '@database/models/order';
+import { RoleEntityService } from '@database/models/role';
+import { OrderEntity, OrderEntityService } from '@database/models/order';
 import { ProductEntity, ProductEntityService } from '@database/models/product';
 
 @Injectable()
 export class OrderService {
   constructor(
     private _utilsService: UtilsService,
+    private _roleEntityService: RoleEntityService,
     private _orderEntityService: OrderEntityService,
     private _productEntityService: ProductEntityService,
   ) {}
 
-  async getAllOrders(
+  getAllOrders(
     parameters: {
       orderBy: string;
       order: 'ASC' | 'DESC';
@@ -24,20 +26,35 @@ export class OrderService {
       skip: any;
     },
     token: string,
-  ): Promise<response> {
+  ): Observable<response> {
     const user_uuid = this._utilsService.userUuid(token);
-    const [orders, count] = await this._orderEntityService.findAll(
-      parameters,
-      user_uuid,
+    return from(this._orderEntityService.findAll(parameters, user_uuid)).pipe(
+      map<[OrderEntity[], number], response>(([orders, count]) => ({
+        status: HttpStatus.OK,
+        message: `orders of => ${user_uuid}`,
+        response: {
+          orders,
+          count,
+        },
+      })),
     );
-    return {
-      status: HttpStatus.OK,
-      message: `orders of => ${user_uuid}`,
-      response: {
-        orders,
-        count,
-      },
-    };
+  }
+
+  getOneOrder(parameters: { token: string; id: number }) {
+    const { id, token } = parameters;
+    const uuid = this._utilsService.userUuid(token);
+    return from(this._roleEntityService.findByRole('admin', uuid)).pipe(
+      mergeMap((role) =>
+        role
+          ? from(this._orderEntityService.findOne(id))
+          : from(this._orderEntityService.findOne(id, uuid)),
+      ),
+      map<OrderEntity, response>((resp) => ({
+        status: HttpStatus.OK,
+        message: 'findOne ORDER',
+        response: resp,
+      })),
+    );
   }
 
   processProducts(createOrder: Create) {
@@ -168,7 +185,7 @@ export class OrderService {
           ? from(this._orderEntityService.delete(id)).pipe(
               map<UpdateResult, response>((resp) => ({
                 status: HttpStatus.OK,
-                message: `order soft deleted (bring order back cleaning deleted_at column of order with id = '${data.id}')`,
+                message: `order soft deleted (bring ORDER back cleaning 'deleted_at' column of order with id = '${data.id}')`,
                 // response: data
               })),
             )
