@@ -12,8 +12,8 @@ import {
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
-import { from, tap, mergeMap } from 'rxjs';
 import { Response } from 'express';
+import { tap, mergeMap } from 'rxjs';
 
 import { Create } from '@ecomm/dtos/order';
 import { response } from '@ecomm/interfaces';
