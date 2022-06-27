@@ -52,7 +52,8 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    from(this._ordersService.getAllOrders(parameters, token))
+    this._ordersService
+      .getAllOrders(parameters, token)
       .pipe(tap((data) => resp.status(data.status).json(data)))
       .subscribe();
   }
@@ -91,7 +92,7 @@ export class OrderController {
   @SetMetadata('roles', ['admin', 'basic'])
   @UseGuards(RoleGuard)
   getOneOrder(
-    @Headers('authorization') token: string,
+    @Token() token: string,
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
   ) {}
@@ -121,7 +122,6 @@ export class OrderController {
           this._ordersService.createOrder(token, createBody, process),
         ),
         tap((data) => {
-          console.log(data)
           resp.status(data.status).json(data);
         }),
       )
@@ -134,5 +134,10 @@ export class OrderController {
   deleteOrder(
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._ordersService
+      .deleteOrder(id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 }
