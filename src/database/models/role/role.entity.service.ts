@@ -17,7 +17,7 @@ export class RoleEntityService {
       .getOne();
   }
 
-  findByRole(type: string, uuid: number) {
+  findByRole(type: string, uuid: string) {
     return this._roleRepo
       .createQueryBuilder('role')
       .leftJoin('role.user', 'user', 'user.uuid = :uuid', { uuid })
