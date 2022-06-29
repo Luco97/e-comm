@@ -68,15 +68,12 @@ export class ProductEntityService {
       .getManyAndCount();
   }
 
-  findOne(id: number, stock?: number): Promise<ProductEntity> {
-    const QB = this._productRepo
+  findOne(id: number): Promise<ProductEntity> {
+    return this._productRepo
       .createQueryBuilder('product')
-      .innerJoinAndSelect('product.category', 'category');
-    // if (stock >= 0)
-    //   QB.where('product.id = :id AND product.stock >= :stock', { id, stock });
-    // else
-    QB.where('product.id = :id', { id });
-    return QB.getOne();
+      .innerJoinAndSelect('product.category', 'category')
+      .where('product.id = :id', { id })
+      .getOne();
   }
 
   delete(id: number): Promise<UpdateResult> {
