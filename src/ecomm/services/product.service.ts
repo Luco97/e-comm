@@ -1,4 +1,4 @@
-import { from, map } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import { Injectable, HttpStatus } from '@nestjs/common';
 
 import { response } from '@ecomm/interfaces';
@@ -31,6 +31,16 @@ export class ProductService {
           ? `all products with category_id = ${category_id}`
           : `all products`,
         response: { products, count },
+      })),
+    );
+  }
+
+  findOne(id: number): Observable<response> {
+    return from(this._productEntityService.findOne(id)).pipe(
+      map<ProductEntity, response>((product) => ({
+        status: HttpStatus.OK,
+        message: 'one product',
+        response: product,
       })),
     );
   }
