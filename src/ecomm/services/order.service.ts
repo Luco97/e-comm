@@ -64,7 +64,7 @@ export class OrderService {
         from(
           this._productEntityService.findOne(
             product.product_id,
-            product.quantity,
+            // ,product.quantity,
           ),
         ),
       );
