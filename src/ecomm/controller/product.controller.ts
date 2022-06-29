@@ -12,6 +12,7 @@ import {
   SetMetadata,
   ParseIntPipe,
 } from '@nestjs/common';
+import { tap } from 'rxjs';
 import { Response } from 'express';
 
 import { RoleGuard } from '../../guards/role.guard';
@@ -31,8 +32,31 @@ export class ProductController {
     @Query('take', new ParseDefaultIntPipe(10)) take: number,
     @Query('skip', new ParseDefaultIntPipe(0)) skip: number,
     @Query('category', new ParseDefaultIntPipe(0)) category_id: number,
+    @Query('search') search: string,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    const parameters: {
+      orderBy: string;
+      order: 'ASC' | 'DESC';
+      take: any;
+      skip: any;
+      search: string;
+    } = {
+      orderBy: ['stock', 'price', 'name', 'created_at'].includes(orderBy)
+        ? orderBy
+        : 'created_at',
+      order: ['ASC', 'DESC'].includes(order)
+        ? (order as 'ASC' | 'DESC')
+        : 'ASC',
+      take: take,
+      skip: skip,
+      search: `%${search}%` || '',
+    };
+    this._productService
+      .findAll(parameters, category_id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 
   @Get(':id')
   oneProduct(
