@@ -62,7 +62,12 @@ export class ProductController {
   oneProduct(
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._productService
+      .findOne(id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 
   @Post()
   @SetMetadata('roles', ['admin'])
