@@ -1,6 +1,7 @@
-import { DeepPartial, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, DeepPartial, Repository, UpdateResult } from 'typeorm';
+
 import { ProductEntity } from './product.entity';
 
 @Injectable()
@@ -20,11 +21,19 @@ export class ProductEntityService {
     order: 'ASC' | 'DESC';
     take: number;
     skip: number;
+    search?: string;
   }): Promise<[ProductEntity[], number]> {
-    const { orderBy, order, skip, take } = parameters;
+    const { orderBy, order, skip, take, search } = parameters;
     return this._productRepo
       .createQueryBuilder('products')
       .innerJoinAndSelect('products.category', 'category')
+      .where(
+        new Brackets((qp) => {
+          search
+            ? qp.where('LOWER(products.name) like :search', { search })
+            : 0;
+        }),
+      )
       .orderBy(`products.${orderBy}`, order)
       .take(take || 5)
       .skip(skip || 0)
@@ -37,14 +46,22 @@ export class ProductEntityService {
       order: 'ASC' | 'DESC';
       take: number;
       skip: number;
+      search?: string;
     },
     category_id: number,
   ): Promise<[ProductEntity[], number]> {
-    const { orderBy, order, skip, take } = parameters;
+    const { orderBy, order, skip, take, search } = parameters;
     return this._productRepo
       .createQueryBuilder('products')
       .innerJoin('products.category', 'category')
-      .where('category = :category_id', { category_id })
+      .where('category.id = :category_id', { category_id })
+      .andWhere(
+        new Brackets((qp) => {
+          search
+            ? qp.where('LOWER(products.name) like :search', { search })
+            : 0;
+        }),
+      )
       .orderBy(`products.${orderBy}`, order)
       .take(take || 5)
       .skip(skip || 0)
@@ -57,8 +74,8 @@ export class ProductEntityService {
       .innerJoinAndSelect('product.category', 'category');
     // if (stock >= 0)
     //   QB.where('product.id = :id AND product.stock >= :stock', { id, stock });
-    // else 
-      QB.where('product.id = :id', { id });
+    // else
+    QB.where('product.id = :id', { id });
     return QB.getOne();
   }
 
