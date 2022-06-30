@@ -24,6 +24,7 @@ export class ProductEntity {
   @Column({
     name: 'image_src',
     type: 'varchar',
+    nullable: true
   })
   image_src: string;
 
@@ -51,6 +52,7 @@ export class ProductEntity {
   @Column({
     name: 'description',
     type: 'varchar',
+    nullable: true
   })
   description: string;
 
