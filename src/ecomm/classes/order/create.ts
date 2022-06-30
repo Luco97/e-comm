@@ -1,16 +1,16 @@
-import { Type } from 'class-transformer';
 import {
-  ArrayMinSize,
-  ArrayNotEmpty,
-  IsDefined,
+  Min,
   IsInt,
-  IsLatitude,
-  IsLongitude,
   IsNumber,
   IsString,
-  Min,
+  IsDefined,
+  IsLatitude,
+  IsLongitude,
+  ArrayMinSize,
+  ArrayNotEmpty,
   ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class Create {
   @ArrayNotEmpty()
