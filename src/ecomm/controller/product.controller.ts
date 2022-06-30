@@ -72,7 +72,12 @@ export class ProductController {
   @Post()
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
-  createProduct(@Body() createBody: Create, @Res() resp: Response<response>) {}
+  createProduct(@Body() createBody: Create, @Res() resp: Response<response>) {
+    this._productService
+      .create(createBody)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 
   @Put(':id')
   @SetMetadata('roles', ['admin'])
@@ -81,7 +86,12 @@ export class ProductController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBody: Update,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._productService
+      .update(updateBody, id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 
   @Delete(':id')
   @SetMetadata('roles', ['admin'])
@@ -89,5 +99,10 @@ export class ProductController {
   deleteProduct(
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._productService
+      .delete(id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 }
