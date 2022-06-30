@@ -1,6 +1,14 @@
-import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  Max,
+  Min,
+  IsString,
+  IsNumber,
+  IsDefined,
+  IsOptional,
+} from 'class-validator';
 
 export class Create {
+  @IsDefined()
   @IsString()
   name: string;
 
@@ -26,4 +34,9 @@ export class Create {
   @IsNumber()
   @Min(0)
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  category_id: number;
 }
