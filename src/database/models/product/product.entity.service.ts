@@ -71,7 +71,7 @@ export class ProductEntityService {
   findOne(id: number): Promise<ProductEntity> {
     return this._productRepo
       .createQueryBuilder('product')
-      .innerJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.category', 'category')
       .where('product.id = :id', { id })
       .getOne();
   }
@@ -80,7 +80,7 @@ export class ProductEntityService {
     return this._productRepo.softDelete(id);
   }
 
-  update(product: ProductEntity): Promise<ProductEntity> {
+  update(product: DeepPartial<ProductEntity>): Promise<ProductEntity> {
     return this._productRepo.save(product);
   }
 
