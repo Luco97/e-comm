@@ -1,6 +1,7 @@
 import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class Update {
+  @IsOptional()
   @IsString()
   name: string;
 
@@ -26,4 +27,9 @@ export class Update {
   @IsNumber()
   @Min(0)
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  category_id: number;
 }
