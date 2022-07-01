@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './category.entity';
@@ -28,7 +28,25 @@ export class CategoryEntityService {
   async findOne(id: number) {
     return this._categoryRepo
       .createQueryBuilder('category')
+      .select(['category.id AS id', 'category.name AS name'])
+      .addSelect(
+        (subQuery) =>
+          subQuery
+            .select('COUNT(products.id)', 'products.id')
+            .from(ProductEntity, 'products')
+            .where('products.category.id = category.id'),
+        'count',
+      )
       .where('category.id = :id', { id })
-      .getOne();
+      .getRawOne();
+  }
+
+  async create(newCategory: DeepPartial<CategoryEntity>) {
+    const category = this._categoryRepo.create(newCategory);
+    return this._categoryRepo.save(category);
+  }
+
+  async delete(id: number) {
+    return this._categoryRepo.delete(id);
   }
 }
