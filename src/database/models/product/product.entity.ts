@@ -24,7 +24,7 @@ export class ProductEntity {
   @Column({
     name: 'image_src',
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   image_src: string;
 
@@ -52,7 +52,7 @@ export class ProductEntity {
   @Column({
     name: 'description',
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   description: string;
 
@@ -66,7 +66,10 @@ export class ProductEntity {
   @JoinTable()
   orders: OrderEntity[];
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products)
+  @ManyToOne(() => CategoryEntity, (category) => category.products, {
+    nullable: true,
+    onDelete: 'SET NULL'
+  })
   category: CategoryEntity;
 
   @CreateDateColumn({
