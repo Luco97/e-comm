@@ -58,15 +58,15 @@ export class OrderEntityService {
   }
 
   async findOne(id: number, user_uuid?: string) {
-    const QB = this._orderRepo.createQueryBuilder('order');
-    QB.innerJoinAndSelect('order.products', 'products');
+    const QB = this._orderRepo
+      .createQueryBuilder('order')
+      .withDeleted()
+      .leftJoinAndSelect('order.products', 'products')
+      .where('order.id = :id', { id });
     if (user_uuid)
-      QB.innerJoin('order.user', 'user').where(
-        'order.id = :id AND user.id = :user_uuid',
-        { id, user_uuid },
-      );
-    else QB.where('order.id = :id', { id });
-
+      QB.leftJoin('order.user', 'user').andWhere('user.id = :user_uuid', {
+        user_uuid,
+      });
     return QB.getOne();
   }
 
