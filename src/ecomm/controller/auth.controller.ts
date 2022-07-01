@@ -1,17 +1,18 @@
-import { Login, Sign, Update } from '@ecomm/dtos/user';
 import {
-  Body,
-  Controller,
-  Headers,
-  Post,
   Put,
   Res,
+  Body,
+  Post,
+  Headers,
   UseGuards,
+  Controller,
 } from '@nestjs/common';
+
 import { Response } from 'express';
 import { tap, from } from 'rxjs';
 
 import { response } from '@ecomm/interfaces';
+import { Login, Sign, Update } from '@ecomm/dtos/user';
 import { AuthGuard } from '../../guards/auth.guard';
 import { UserService } from '../services/user.service';
 
