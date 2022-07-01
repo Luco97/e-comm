@@ -94,7 +94,12 @@ export class OrderController {
     @Token() token: string,
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._ordersService
+      .getOneOrder({ token, id })
+      .pipe(tap((response) => resp.status(response.status).json(response)))
+      .subscribe();
+  }
 
   @Post()
   @SetMetadata('roles', ['admin', 'basic'])
