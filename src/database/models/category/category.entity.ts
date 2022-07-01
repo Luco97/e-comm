@@ -8,7 +8,7 @@ export class CategoryEntity {
   @PrimaryGeneratedColumn({
     name: 'id',
   })
-  id: string;
+  id: number;
 
   @Column({
     name: 'name',
