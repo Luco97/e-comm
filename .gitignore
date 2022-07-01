@@ -36,6 +36,8 @@ lerna-debug.log*
 
 # env
 .env
+.env.local
+.env.prod
 
 # extras
 extras.txt
