@@ -1,12 +1,14 @@
-import { compare } from 'bcrypt';
 import { Injectable, HttpStatus } from '@nestjs/common';
 
+import { compare } from 'bcrypt';
+import { from, Observable, mergeMap, of, map } from 'rxjs';
+
 import { UtilsService } from '@shared/auth';
-import { Login, Sign } from '@ecomm/dtos/user';
 import { response } from '@ecomm/interfaces';
+import { Login, Sign } from '@ecomm/dtos/user';
 import { Update } from '../classes/user/update';
 import { RoleEntityService } from '@database/models/role';
-import { UserEntityService } from '@database/models/user';
+import { UserEntity, UserEntityService } from '@database/models/user';
 
 @Injectable()
 export class UserService {
@@ -15,63 +17,91 @@ export class UserService {
     private _roleEntityService: RoleEntityService,
     private _utilsService: UtilsService,
   ) {}
-  async register(parameters: Sign): Promise<response> {
+  register(parameters: Sign): Observable<response> {
     const { email, name, image_src, last_name, password } = parameters;
-    const user = await this._userEntityService.findMail(email);
-    if (user?.uuid)
-      return { status: HttpStatus.CONFLICT, message: 'email on use' };
-    const role = await this._roleEntityService.findRole('basic');
-    await this._userEntityService.create({
-      email,
-      name,
-      last_name,
-      password,
-      image_src,
-      role,
-    });
-    return {
-      status: HttpStatus.CREATED,
-      message: 'user created',
-    };
+    return from(this._userEntityService.findMail(email)).pipe(
+      mergeMap((user) =>
+        user?.email
+          ? of<response>({
+              status: HttpStatus.CONFLICT,
+              message: 'email on use',
+            })
+          : from(this._roleEntityService.findRole('basic')).pipe(
+              mergeMap((role) =>
+                from(
+                  this._userEntityService.create({
+                    role,
+                    name,
+                    email,
+                    password,
+                    last_name,
+                    image_src,
+                  }),
+                ).pipe(
+                  map<UserEntity, response>(() => ({
+                    status: HttpStatus.CREATED,
+                    message: 'user created',
+                  })),
+                ),
+              ),
+            ),
+      ),
+    );
   }
 
-  async login(parameters: Login): Promise<response> {
+  login(parameters: Login): Observable<response> {
     const { email, password } = parameters;
-    const {
-      uuid,
-      name,
-      password: userHash,
-    } = await this._userEntityService.findUser(email);
-    if (!uuid) return { status: HttpStatus.OK, message: 'invalid credentials' };
-    const passCompare = await compare(password, userHash);
-    if (!passCompare)
-      return { status: HttpStatus.OK, message: 'inssvalid credentials' };
-    const token: string = this._utilsService.genJWT({ uuid, name });
-    return {
-      status: HttpStatus.ACCEPTED,
-      message: 'welcome',
-      response: {
-        token,
-      },
-    };
+    return from(this._userEntityService.findUser(email)).pipe(
+      mergeMap(({ uuid, name, password: userHash }) =>
+        !uuid
+          ? of<response>({
+              status: HttpStatus.OK,
+              message: 'invalid credentials',
+            })
+          : from(compare(password, userHash)).pipe(
+              map<boolean, response>((passCompare) => {
+                if (!passCompare)
+                  return {
+                    status: HttpStatus.OK,
+                    message: 'inssvalid credentials',
+                  };
+                const token: string = this._utilsService.genJWT({ uuid, name });
+                return {
+                  status: HttpStatus.ACCEPTED,
+                  message: 'welcome',
+                  response: { token },
+                };
+              }),
+            ),
+      ),
+    );
   }
 
-  async updateInfo(parameters: Update, token: string): Promise<response> {
+  updateInfo(parameters: Update, token: string): Observable<response> {
     const { image_src, last_name, name } = parameters;
     const uuid = this._utilsService.userUuid(token);
-    const user = await this._userEntityService.findOne(uuid);
-    if (!user)
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: `user = '${uuid}' not found`,
-      };
-    user.name = name || user.name;
-    user.image_src = image_src || user.image_src;
-    user.last_name = last_name || user.last_name;
-    const updateUser = await this._userEntityService.update(user);
-    return {
-      status: HttpStatus.OK,
-      message: 'user updated',
-    };
+
+    return from(this._userEntityService.findOne(uuid)).pipe(
+      mergeMap((user) =>
+        !user
+          ? of<response>({
+              status: HttpStatus.NOT_FOUND,
+              message: `user = '${uuid}' not found`,
+            })
+          : from(
+              this._userEntityService.update({
+                uuid: user.uuid,
+                name: name || user.name,
+                last_name: last_name || user.last_name,
+                image_src: image_src || user.image_src,
+              }),
+            ).pipe(
+              map<UserEntity, response>(() => ({
+                status: HttpStatus.OK,
+                message: 'user updated',
+              })),
+            ),
+      ),
+    );
   }
 }
