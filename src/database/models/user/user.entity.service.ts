@@ -19,7 +19,7 @@ export class UserEntityService {
       .where('user.uuid = :uuid', { uuid })
       .getOne();
   }
-  update(user: UserEntity): Promise<UserEntity> {
+  update(user: DeepPartial<UserEntity>): Promise<UserEntity> {
     const updateUser = this._userRepo.create(user);
     return this._userRepo.save(updateUser);
   }
