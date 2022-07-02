@@ -28,9 +28,19 @@ import { CategoryEntity } from './models/category/category.entity';
           CategoryEntity,
         ],
         url: configService.get('DATABASE_URL'),
-        synchronize: true,
+        synchronize:
+          configService.get('NODE_ENV') != 'production' ? true : false,
         autoLoadEntities: true,
         logging: 'all',
+        extra:
+          configService.get('NODE_ENV') == 'production'
+            ? {
+                ssl: {
+                  sslmode: true,
+                  rejectUnauthorized: false,
+                },
+              }
+            : {},
       }),
     }),
     TypeOrmModule.forFeature([
