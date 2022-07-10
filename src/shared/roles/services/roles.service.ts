@@ -15,7 +15,8 @@ export class RolesService {
       return this._roleRepo
         .createQueryBuilder('role')
         .leftJoin('role.user', 'user', 'user.uuid = :uuid', { uuid })
-        .where('role.type = :type AND user.uuid = :uuid', { type, uuid })
+        .where('role.type = :type', { type })
+        .andWhere('user.uuid = :uuid', { uuid })
         .getCount();
     } catch (error) {
       return new Promise<number>((resolve) => 0);
