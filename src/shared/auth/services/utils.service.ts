@@ -39,4 +39,19 @@ export class UtilsService {
       return '00000000-0000-0000-0000-000000000000';
     }
   }
+
+  payload(token: string): { uuid: string; username: string } {
+    try {
+      const payload = this._jwtService.verify(token, {
+        secret: process.env.SECRET_KEY,
+      });
+      if (payload?.context?.username && payload?.context?.extra)
+        return {
+          uuid: payload?.context?.extra,
+          username: payload?.context?.username,
+        };
+    } catch (error) {
+      return { uuid: '00000000-0000-0000-0000-000000000000', username: '' };
+    }
+  }
 }
