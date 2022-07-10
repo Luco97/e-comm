@@ -1,14 +1,13 @@
 import { genSalt, hash } from 'bcrypt';
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   OneToMany,
-  BeforeInsert,
-  BeforeUpdate,
   ManyToOne,
+  BeforeInsert,
+  PrimaryColumn,
 } from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
 import { RoleEntity } from '../role/role.entity';
@@ -17,9 +16,10 @@ import { RoleEntity } from '../role/role.entity';
   name: 'user',
 })
 export class UserEntity {
-  @PrimaryGeneratedColumn('uuid', {
-    name: 'id',
-  })
+  // @PrimaryGeneratedColumn('uuid', {
+  //   name: 'id',
+  // })
+  @PrimaryColumn({ select: false, generated: 'uuid', name: 'id' })
   uuid: string;
 
   @Column({
@@ -33,7 +33,7 @@ export class UserEntity {
     name: 'password',
     type: 'varchar',
     nullable: false,
-    select: false
+    select: false,
   })
   password: string;
 
