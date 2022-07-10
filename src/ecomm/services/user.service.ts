@@ -106,11 +106,15 @@ export class UserService {
   }
 
   validateUser(token: string, role: string) {
-    const uuid = this._utilsService.userUuid(token);
+    const { uuid, username } = this._utilsService.payload(token);
     return from(this._roleEntityService.findByRole(role, uuid)).pipe(
       map<number, response>((exist) =>
         exist
-          ? { status: HttpStatus.ACCEPTED, message: 'valid role' }
+          ? {
+              status: HttpStatus.ACCEPTED,
+              message: 'valid role',
+              response: this._utilsService.genJWT({ uuid, name: username }),
+            }
           : { status: HttpStatus.UNAUTHORIZED, message: 'invalid role' },
       ),
     );
