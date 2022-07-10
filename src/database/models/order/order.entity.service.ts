@@ -57,6 +57,29 @@ export class OrderEntityService {
       .getManyAndCount();
   }
 
+  async findAllforAdmin(
+    parameters: {
+      orderBy: string;
+      order: 'ASC' | 'DESC';
+      take: number;
+      skip: number;
+    },
+    email?: string,
+  ) {
+    const { order, orderBy, skip, take } = parameters;
+    const QB = this._orderRepo.createQueryBuilder('orders');
+    if (email) {
+      QB.leftJoin('orders.user', 'user', 'user.email = :email', {
+        email,
+      });
+      QB.where('user.email = :email', { email });
+    } else QB.leftJoinAndSelect('orders.user', 'user');
+    return QB.orderBy(`orders.${orderBy || 'created_at'}`, order)
+      .take(take || 10)
+      .skip(skip || 0)
+      .getManyAndCount();
+  }
+
   async findOne(id: number, user_uuid?: string) {
     const QB = this._orderRepo
       .createQueryBuilder('order')
