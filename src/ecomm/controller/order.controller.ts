@@ -61,6 +61,7 @@ export class OrderController {
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   allOrdersAdmin(
+    @Query('username') username: string,
     @Query('orderBy') orderBy: string,
     @Query('order') order: string,
     @Query('take', new ParseDefaultIntPipe(10)) take: number,
@@ -82,9 +83,10 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    resp
-      .status(200)
-      .json({ status: 200, message: 'object', response: parameters });
+    this._ordersService
+      .getAllOrdersAdmin(parameters, username)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
   }
 
   @Get(':id')
