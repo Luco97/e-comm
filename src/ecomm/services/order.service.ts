@@ -18,6 +18,29 @@ export class OrderService {
     private _productEntityService: ProductEntityService,
   ) {}
 
+  getAllOrdersAdmin(
+    parameters: {
+      orderBy: string;
+      order: 'ASC' | 'DESC';
+      take: any;
+      skip: any;
+    },
+    username: string,
+  ) {
+    return from(
+      this._orderEntityService.findAllforAdmin(parameters, username),
+    ).pipe(
+      map<[OrderEntity[], number], response>(([orders, count]) => ({
+        status: HttpStatus.OK,
+        message: `orders of => ${username ? username : 'All'}`,
+        response: {
+          orders,
+          count,
+        },
+      })),
+    );
+  }
+
   getAllOrders(
     parameters: {
       orderBy: string;
