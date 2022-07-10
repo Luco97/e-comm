@@ -1,4 +1,13 @@
-import { Put, Res, Body, Post, UseGuards, Controller } from '@nestjs/common';
+import {
+  Get,
+  Put,
+  Res,
+  Body,
+  Post,
+  Param,
+  UseGuards,
+  Controller,
+} from '@nestjs/common';
 
 import { tap } from 'rxjs';
 import { Response } from 'express';
@@ -37,6 +46,19 @@ export class AuthController {
   ) {
     this._userService
       .updateInfo(updateBody, token)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
+
+  @Get('validate/:role')
+  @UseGuards(AuthGuard)
+  isValid(
+    @Token() token: string,
+    @Param('role') role: string,
+    @Res() resp: Response<response>,
+  ) {
+    this._userService
+      .validateUser(token, role)
       .pipe(tap((data) => resp.status(data.status).json(data)))
       .subscribe();
   }
