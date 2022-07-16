@@ -35,6 +35,7 @@ E-commerce basico utilizando NestJS framework como Back-end, las herramientas ut
 - PostgreSQL como base de datos.
   - Usando TypeORM.
 - JWT para la autenticacion.
+- Patron de obervers (los servicios de las entidades poseen llamadas async propias de typeORM, el uso de estas en los servicios de los controladores se manejan con Obervables)
 - Y mas ... (ya sabre que chamullar)
 
 ### Diagrama E-R
