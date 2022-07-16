@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CategoryEntityService } from './models/category/category.entity.service';
-import { ProductEntityService } from './models/product/product.entity.service';
-import { OrderEntityService } from './models/order/order.entity.service';
+
+// Entities services
 import { UserEntityService } from './models/user/user.entity.service';
 import { RoleEntityService } from './models/role/role.entity.service';
+import { OrderEntityService } from './models/order/order.entity.service';
+import { ProductEntityService } from './models/product/product.entity.service';
+import { CategoryEntityService } from './models/category/category.entity.service';
+
+// Entities
 import { RoleEntity } from './models/role/role.entity';
 import { UserEntity } from './models/user/user.entity';
 import { OrderEntity } from './models/order/order.entity';
