@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@shared/*": ["src/shared/*"],
-      "@ecomm/dtos/*": ["src/ecomm/classes/*"],
+      "@ecomm/dtos/*": ["src/ecomm/dtos/*"],
       "@ecomm/interfaces": ["src/ecomm/interfaces"],
       "@database/models/*": ["src/database/models/*"],
     }
