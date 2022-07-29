@@ -5,8 +5,7 @@ import { from, Observable, mergeMap, of, map } from 'rxjs';
 
 import { UtilsService } from '@shared/auth';
 import { response } from '@ecomm/interfaces';
-import { Login, Sign } from '@ecomm/dtos/user';
-import { Update } from '../classes/user/update';
+import { Login, Sign, Update } from '@ecomm/dtos/user';
 import { RoleEntityService } from '@database/models/role';
 import { UserEntity, UserEntityService } from '@database/models/user';
 
