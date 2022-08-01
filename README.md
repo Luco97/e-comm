@@ -1,4 +1,24 @@
 <p align="center">
+  <a><img src="https://res.cloudinary.com/hgqsi1lcq/image/upload/v1656277149/sepun/logos/Logo_back_llraoj.png" width="320" alt="Manga-api Logo" /></a>
+</p>
+
+## Description
+
+E-commerce basico utilizando NestJS framework como Back-end, las herramientas utilizadas son:
+
+- PostgreSQL como base de datos.
+  - Usando TypeORM.
+- JWT para la autenticacion.
+- Patron de obervers (los servicios de las entidades poseen llamadas async propias de typeORM, el uso de estas en los servicios de los controladores se manejan con Obervables)
+- Y mas ... (ya sabre que chamullar)
+
+### Diagrama E-R
+
+<img src="https://cdn.discordapp.com/attachments/920746100464431144/994371660989870150/RF-diagram.png" alt="Diagrama F-R utilizado como referencia">
+
+<hr>
+
+<p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
@@ -22,25 +42,7 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-<hr>
 
-<p align="center">
-  <a><img src="https://res.cloudinary.com/hgqsi1lcq/image/upload/v1656277149/sepun/logos/Logo_back_llraoj.png" width="320" alt="Manga-api Logo" /></a>
-</p>
-
-## Description
-
-E-commerce basico utilizando NestJS framework como Back-end, las herramientas utilizadas son:
-
-- PostgreSQL como base de datos.
-  - Usando TypeORM.
-- JWT para la autenticacion.
-- Patron de obervers (los servicios de las entidades poseen llamadas async propias de typeORM, el uso de estas en los servicios de los controladores se manejan con Obervables)
-- Y mas ... (ya sabre que chamullar)
-
-### Diagrama E-R
-
-<img src="https://cdn.discordapp.com/attachments/920746100464431144/994371660989870150/RF-diagram.png" alt="Diagrama F-R utilizado como referencia">
 
 ## Installation
 
