@@ -15,7 +15,6 @@ import { UserEntity } from './models/user/user.entity';
 import { OrderEntity } from './models/order/order.entity';
 import { ProductEntity } from './models/product/product.entity';
 import { CategoryEntity } from './models/category/category.entity';
-import { EmailExistEntityService } from './models/email/email-exist.entity.service';
 
 @Module({
   imports: [
@@ -62,7 +61,6 @@ import { EmailExistEntityService } from './models/email/email-exist.entity.servi
     OrderEntityService,
     ProductEntityService,
     CategoryEntityService,
-    EmailExistEntityService,
   ],
   providers: [
     UserEntityService,
@@ -70,7 +68,6 @@ import { EmailExistEntityService } from './models/email/email-exist.entity.servi
     OrderEntityService,
     ProductEntityService,
     CategoryEntityService,
-    EmailExistEntityService,
   ],
 })
 export class DatabaseModule {}
