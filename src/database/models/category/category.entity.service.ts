@@ -11,7 +11,7 @@ export class CategoryEntityService {
     private _categoryRepo: Repository<CategoryEntity>,
   ) {}
 
-  async findAll(): Promise<CategoryEntity[]> {
+  findAll(): Promise<CategoryEntity[]> {
     return this._categoryRepo
       .createQueryBuilder('category')
       .select(['category.id AS id', 'category.name AS name'])
@@ -25,7 +25,7 @@ export class CategoryEntityService {
       .getRawMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<CategoryEntity> {
     return this._categoryRepo
       .createQueryBuilder('category')
       .select(['category.id AS id', 'category.name AS name'])
@@ -41,12 +41,12 @@ export class CategoryEntityService {
       .getRawOne();
   }
 
-  async create(newCategory: DeepPartial<CategoryEntity>) {
+  create(newCategory: DeepPartial<CategoryEntity>): Promise<CategoryEntity> {
     const category = this._categoryRepo.create(newCategory);
     return this._categoryRepo.save(category);
   }
 
-  async delete(id: number) {
+  delete(id: number) {
     return this._categoryRepo.delete(id);
   }
 }
