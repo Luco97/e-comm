@@ -10,16 +10,16 @@ export class OrderEntityService {
     private _orderRepo: Repository<OrderEntity>,
   ) {}
 
-  async create(newOrder: DeepPartial<OrderEntity>) {
+  create(newOrder: DeepPartial<OrderEntity>): Promise<OrderEntity> {
     const order = this._orderRepo.create(newOrder);
     return this._orderRepo.save(order);
   }
 
-  async update(order: OrderEntity) {
+  update(order: OrderEntity): Promise<OrderEntity> {
     return this._orderRepo.save(order);
   }
 
-  async createUserOrder(orderID: number, uuid: string) {
+  createUserOrder(orderID: number, uuid: string): Promise<void> {
     return this._orderRepo
       .createQueryBuilder('order')
       .relation('user')
@@ -27,7 +27,7 @@ export class OrderEntityService {
       .set(uuid);
   }
 
-  async createProductOrder(orderID: number, products_id: number[]) {
+  createProductOrder(orderID: number, products_id: number[]): Promise<void> {
     return this._orderRepo
       .createQueryBuilder('order')
       .relation('products')
@@ -35,7 +35,7 @@ export class OrderEntityService {
       .add(products_id);
   }
 
-  async findAll(
+  findAll(
     parameters: {
       orderBy: string;
       order: 'ASC' | 'DESC';
@@ -43,7 +43,7 @@ export class OrderEntityService {
       skip: number;
     },
     uuid?: string,
-  ) {
+  ): Promise<[OrderEntity[], number]> {
     const { order, orderBy, skip, take } = parameters;
     const QB = this._orderRepo.createQueryBuilder('orders');
     if (uuid)
@@ -57,7 +57,7 @@ export class OrderEntityService {
       .getManyAndCount();
   }
 
-  async findAllforAdmin(
+  findAllforAdmin(
     parameters: {
       orderBy: string;
       order: 'ASC' | 'DESC';
@@ -65,7 +65,7 @@ export class OrderEntityService {
       skip: number;
     },
     email?: string,
-  ) {
+  ): Promise<[OrderEntity[], number]> {
     const { order, orderBy, skip, take } = parameters;
     const QB = this._orderRepo.createQueryBuilder('orders');
     if (email) {
@@ -80,7 +80,7 @@ export class OrderEntityService {
       .getManyAndCount();
   }
 
-  async findOne(id: number, user_uuid?: string) {
+  findOne(id: number, user_uuid?: string): Promise<OrderEntity> {
     const QB = this._orderRepo
       .createQueryBuilder('order')
       .withDeleted()
