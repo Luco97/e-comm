@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository, UpdateResult } from 'typeorm';
 import { OrderEntity } from './order.entity';
 
 @Injectable()
@@ -47,7 +47,7 @@ export class OrderEntityService {
     const { order, orderBy, skip, take } = parameters;
     const QB = this._orderRepo.createQueryBuilder('orders');
     if (uuid)
-      QB.innerJoin('orders.user', 'user', 'user.uuid = :uuid', { uuid }).where(
+      QB.leftJoin('orders.user', 'user', 'user.uuid = :uuid', { uuid }).where(
         'user.uuid = :uuid',
         { uuid },
       );
@@ -93,7 +93,7 @@ export class OrderEntityService {
     return QB.getOne();
   }
 
-  async delete(id: number) {
+  delete(id: number): Promise<UpdateResult> {
     return this._orderRepo.softDelete(id);
   }
 }
