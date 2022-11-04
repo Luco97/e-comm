@@ -11,7 +11,7 @@ export class ProductEntityService {
     private _productRepo: Repository<ProductEntity>,
   ) {}
 
-  create(newProduct: DeepPartial<ProductEntity>) {
+  create(newProduct: DeepPartial<ProductEntity>): Promise<ProductEntity> {
     const product = this._productRepo.create(newProduct);
     return this._productRepo.save(product);
   }
