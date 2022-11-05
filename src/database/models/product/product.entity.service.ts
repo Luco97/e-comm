@@ -30,7 +30,7 @@ export class ProductEntityService {
       .where(
         new Brackets((qp) => {
           search
-            ? qp.where('LOWER(products.name) like :search', { search })
+            ? qp.where('LOWER(products.name) like :search', { search: `%${search}%` })
             : 0;
         }),
       )

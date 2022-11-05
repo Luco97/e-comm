@@ -50,7 +50,7 @@ export class ProductController {
         : 'ASC',
       take: take,
       skip: skip,
-      search: `%${search||''}%`,
+      search: search || '',
     };
     this._productService
       .findAll(parameters, category_id)
