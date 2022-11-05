@@ -25,7 +25,7 @@ export class CategoryEntityService {
       .getRawMany();
   }
 
-  async findOne(id: number): Promise<CategoryEntity> {
+  findOne(id: number): Promise<CategoryEntity> {
     return this._categoryRepo
       .createQueryBuilder('category')
       .select(['category.id AS id', 'category.name AS name'])

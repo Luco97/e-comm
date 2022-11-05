@@ -106,7 +106,7 @@ export class OrderController {
   @Post()
   @SetMetadata('roles', ['admin', 'basic'])
   @UseGuards(RoleGuard)
-  async createOrder(
+  createOrder(
     @Token() token: string,
     @Body() createBody: Create,
     @Res() resp: Response<response>,
