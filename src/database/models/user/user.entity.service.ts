@@ -24,6 +24,11 @@ export class UserEntityService {
 
   update(user: DeepPartial<UserEntity>): Promise<UserEntity> {
     const updateUser = this._userRepo.create(user);
+    return this._userRepo.save(updateUser, { listeners: false });
+  }
+
+  updatePassword(user: DeepPartial<UserEntity>): Promise<UserEntity> {
+    const updateUser = this._userRepo.create(user);
     return this._userRepo.save(updateUser);
   }
 
