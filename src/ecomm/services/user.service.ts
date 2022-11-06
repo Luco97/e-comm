@@ -5,7 +5,7 @@ import { from, Observable, mergeMap, of, map } from 'rxjs';
 
 import { UtilsService } from '@shared/auth';
 import { response } from '@ecomm/interfaces';
-import { Login, Sign, Update } from '@ecomm/dtos/user';
+import { Login, Sign, Update, UpdatePassword } from '@ecomm/dtos/user';
 import { RoleEntityService } from '@database/models/role';
 import { UserEntity, UserEntityService } from '@database/models/user';
 
@@ -101,6 +101,40 @@ export class UserService {
               })),
             ),
       ),
+    );
+  }
+
+  updatePassword(
+    parameters: UpdatePassword,
+    token: string,
+  ): Observable<response> {
+    const { password } = parameters;
+    const uuid = this._utilsService.userUuid(token);
+
+    return from(this._userEntityService.findOne(uuid)).pipe(
+      mergeMap((user) => {
+        if (!user) {
+          return of<response>({
+            status: HttpStatus.NOT_FOUND,
+            message: `user = '${uuid}' not found`,
+          });
+        } else {
+          return from(
+            this._userEntityService.updatePassword({
+              uuid: user.uuid,
+              name: user.name,
+              last_name: user.last_name,
+              image_src: user.image_src,
+              password,
+            }),
+          ).pipe(
+            map<UserEntity, response>(() => ({
+              status: HttpStatus.OK,
+              message: 'user updated',
+            })),
+          );
+        }
+      }),
     );
   }
 
