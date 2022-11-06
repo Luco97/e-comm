@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   BeforeInsert,
+  BeforeUpdate,
   PrimaryColumn,
 } from 'typeorm';
 import { OrderEntity } from '../order/order.entity';
@@ -19,7 +20,7 @@ export class UserEntity {
   // @PrimaryGeneratedColumn('uuid', {
   //   name: 'id',
   // })
-  @PrimaryColumn({ select: false, generated: 'uuid', name: 'id' })
+  @PrimaryColumn({ select: false, generated: true, type: 'uuid', name: 'id' })
   uuid: string;
 
   @Column({
@@ -78,6 +79,7 @@ export class UserEntity {
   deleted_at: Date;
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPass() {
     if (!this.password) return;
     const saltRound: number = 10;
