@@ -16,7 +16,7 @@ import { response } from '@ecomm/interfaces';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Token } from '../decorators/token.decorator';
 import { UserService } from '../services/user.service';
-import { Login, Sign, Update } from '@ecomm/dtos/user';
+import { Login, Sign, Update, UpdatePassword } from '@ecomm/dtos/user';
 
 @Controller('auth')
 export class AuthController {
@@ -49,6 +49,14 @@ export class AuthController {
       .pipe(tap((data) => resp.status(data.status).json(data)))
       .subscribe();
   }
+
+  @Put('update/password')
+  @UseGuards(AuthGuard)
+  updatePassword(
+    @Token() token: string,
+    @Body() updateBody: UpdatePassword,
+    @Res() resp: Response<response>,
+  ) {}
 
   @Get('validate/:role')
   @UseGuards(AuthGuard)
