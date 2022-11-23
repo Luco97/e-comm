@@ -30,7 +30,9 @@ export class ProductEntityService {
       .where(
         new Brackets((qp) => {
           search
-            ? qp.where('LOWER(products.name) like :search', { search: `%${search}%` })
+            ? qp.where('LOWER(products.name) like :search', {
+                search: `%${search}%`,
+              })
             : 0;
         }),
       )
@@ -66,6 +68,13 @@ export class ProductEntityService {
       .take(take || 5)
       .skip(skip || 0)
       .getManyAndCount();
+  }
+
+  findAllByIds(productIds: number[]): Promise<ProductEntity[]> {
+    return this._productRepo
+      .createQueryBuilder('product')
+      .where('product.id IN (...:productIds)', { productIds })
+      .getMany();
   }
 
   findOne(id: number): Promise<ProductEntity> {
