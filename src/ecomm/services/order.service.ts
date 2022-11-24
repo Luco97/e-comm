@@ -85,18 +85,6 @@ export class OrderService {
       (element) => element.product_id,
     );
 
-    const findArray: Observable<ProductEntity>[] = [];
-    createOrder.products.forEach((product) => {
-      findArray.push(
-        from(
-          this._productEntityService.findOne(
-            product.product_id,
-            // ,product.quantity,
-          ),
-        ),
-      );
-    });
-
     return from(this._productEntityService.findAllByIds(productIds)).pipe(
       map((data) => {
         const productsCart: ProductJSON = data.reduce<ProductJSON>(
