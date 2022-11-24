@@ -1,3 +1,9 @@
 export interface ProductJSON {
-  [key: string]: number;
+  [key: string]: meta;
+}
+
+interface meta {
+  value: number;
+  quantity: number;
+  discount: number;
 }
