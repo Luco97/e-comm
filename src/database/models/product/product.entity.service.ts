@@ -73,7 +73,7 @@ export class ProductEntityService {
   findAllByIds(productIds: number[]): Promise<ProductEntity[]> {
     return this._productRepo
       .createQueryBuilder('product')
-      .where('product.id IN (...:productIds)', { productIds })
+      .where('product.id IN (:...productIds)', { productIds })
       .getMany();
   }
 
