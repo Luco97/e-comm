@@ -81,6 +81,10 @@ export class OrderService {
   }
 
   processProducts(createOrder: Create) {
+    const productIds: number[] = createOrder.products.map<number>(
+      (element) => element.product_id,
+    );
+
     const findArray: Observable<ProductEntity>[] = [];
     createOrder.products.forEach((product) => {
       findArray.push(
@@ -92,30 +96,45 @@ export class OrderService {
         ),
       );
     });
-    return forkJoin(findArray).pipe(
+
+    return from(this._productEntityService.findAllByIds(productIds)).pipe(
       map((data) => {
-        const productsCart: ProductJSON = createOrder.products.reduce(
-          (acc, curr) => ({ ...acc, [curr.product_id]: curr.quantity }),
+        const productsCart: ProductJSON = data.reduce<ProductJSON>(
+          (acc, curr) => {
+            return {
+              ...acc,
+              [curr.id]: {
+                value: curr.price,
+                discount: curr.offer,
+                quantity: createOrder.products.find(
+                  (cart_product) => (curr.id = cart_product.product_id),
+                ).quantity,
+              },
+            };
+          },
           {},
         );
-        const ifExist = data.findIndex((product) => !product);
+        const ifExist = productIds.findIndex(
+          (element) => !data.find((product) => product.id == element),
+        );
+        // const ifExist = data.findIndex((product) => !product);
         const ifStock =
           ifExist < 0
             ? data.findIndex(
                 (product) =>
-                  product?.stock - productsCart[`${product?.id}`] < 0,
+                  product?.stock - productsCart[`${product?.id}`].quantity < 0,
               )
             : -1;
-        const products_id = createOrder.products.reduce(
-          (acc: number[], curr) => [curr.product_id, ...acc],
-          [],
-        );
+        // const products_id = createOrder.products.reduce(
+        //   (acc: number[], curr) => [curr.product_id, ...acc],
+        //   [],
+        // );
         return ifExist < 0 && ifStock < 0
           ? {
               products: data,
               message: 'conditions accepted',
               details: productsCart,
-              extra: products_id,
+              extra: productIds,
             }
           : {
               products: [],
@@ -124,7 +143,7 @@ export class OrderService {
                   ? `quantity of product with id = '${createOrder.products[ifStock].product_id}' is greater than the stock avalible`
                   : `product with id = '${createOrder.products[ifExist].product_id}' doesn't exist`,
               details: productsCart,
-              extra: products_id,
+              extra: productIds,
             };
       }),
       mergeMap(({ products, message, details, extra }) => {
