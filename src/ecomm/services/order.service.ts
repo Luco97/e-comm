@@ -105,7 +105,6 @@ export class OrderService {
         const ifExist = productIds.findIndex(
           (element) => !data.find((product) => product.id == element),
         );
-        // const ifExist = data.findIndex((product) => !product);
         const ifStock =
           ifExist < 0
             ? data.findIndex(
@@ -113,10 +112,6 @@ export class OrderService {
                   product?.stock - productsCart[`${product?.id}`].quantity < 0,
               )
             : -1;
-        // const products_id = createOrder.products.reduce(
-        //   (acc: number[], curr) => [curr.product_id, ...acc],
-        //   [],
-        // );
         return ifExist < 0 && ifStock < 0
           ? {
               products: data,
@@ -139,7 +134,6 @@ export class OrderService {
           products.forEach((product, index) => {
             createOrder.products[index].quantity =
               product.stock - createOrder.products[index].quantity;
-            // product.stock -= createOrder.products[index].quantity;
           });
           return from(this._productEntityService.updateAll(products)).pipe(
             map((products) => {
