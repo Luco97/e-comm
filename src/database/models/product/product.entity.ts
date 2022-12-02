@@ -1,5 +1,6 @@
 import { OrderEntity } from '../order/order.entity';
 import { CategoryEntity } from '../category/category.entity';
+import { ExtraEntity } from '../extra/extra.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +9,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -68,9 +70,12 @@ export class ProductEntity {
 
   @ManyToOne(() => CategoryEntity, (category) => category.products, {
     nullable: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
   category: CategoryEntity;
+
+  @OneToMany(() => ExtraEntity, (extras) => extras.product, { nullable: true })
+  extras: ExtraEntity[];
 
   @CreateDateColumn({
     name: 'created_at',
