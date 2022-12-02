@@ -7,7 +7,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  AfterLoad,
 } from 'typeorm';
 
 import { ProductJSON } from '@ecomm/interfaces';
@@ -89,14 +88,12 @@ export class OrderEntity {
     type: 'timestamp',
   })
   created_at: Date;
-  created_at_object?: number;
 
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp',
   })
   updated_at: Date;
-  updated_at_object?: number;
 
   @DeleteDateColumn({
     name: 'deleted_at',
@@ -104,10 +101,4 @@ export class OrderEntity {
     select: false,
   })
   deleted_at: Date;
-
-  @AfterLoad()
-  private transformDate() {
-    this.created_at_object = this.created_at.getTime();
-    this.updated_at_object = this.updated_at.getTime();
-  }
 }
