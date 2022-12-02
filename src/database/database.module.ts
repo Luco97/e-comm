@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserEntityService } from './models/user/user.entity.service';
 import { RoleEntityService } from './models/role/role.entity.service';
 import { OrderEntityService } from './models/order/order.entity.service';
+import { ExtraEntityService } from './models/extra/extra.entity.service';
 import { ProductEntityService } from './models/product/product.entity.service';
 import { CategoryEntityService } from './models/category/category.entity.service';
 
@@ -13,6 +14,7 @@ import { CategoryEntityService } from './models/category/category.entity.service
 import { RoleEntity } from './models/role/role.entity';
 import { UserEntity } from './models/user/user.entity';
 import { OrderEntity } from './models/order/order.entity';
+import { ExtraEntity } from './models/extra/extra.entity';
 import { ProductEntity } from './models/product/product.entity';
 import { CategoryEntity } from './models/category/category.entity';
 
@@ -28,6 +30,7 @@ import { CategoryEntity } from './models/category/category.entity';
           RoleEntity,
           UserEntity,
           OrderEntity,
+          ExtraEntity,
           ProductEntity,
           CategoryEntity,
         ],
@@ -51,6 +54,7 @@ import { CategoryEntity } from './models/category/category.entity';
       RoleEntity,
       UserEntity,
       OrderEntity,
+      ExtraEntity,
       ProductEntity,
       CategoryEntity,
     ]),
@@ -59,6 +63,7 @@ import { CategoryEntity } from './models/category/category.entity';
     UserEntityService,
     RoleEntityService,
     OrderEntityService,
+    ExtraEntityService,
     ProductEntityService,
     CategoryEntityService,
   ],
@@ -66,6 +71,7 @@ import { CategoryEntity } from './models/category/category.entity';
     UserEntityService,
     RoleEntityService,
     OrderEntityService,
+    ExtraEntityService,
     ProductEntityService,
     CategoryEntityService,
   ],
