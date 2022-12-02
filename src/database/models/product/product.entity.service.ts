@@ -81,6 +81,7 @@ export class ProductEntityService {
     return this._productRepo
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.extras', 'extra')
       .where('product.id = :id', { id })
       .getOne();
   }
