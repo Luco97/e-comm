@@ -10,7 +10,6 @@ import {
   AfterLoad,
 } from 'typeorm';
 
-import { dateType } from '@shared/utils';
 import { ProductJSON } from '@ecomm/interfaces';
 import { UserEntity } from '../user/user.entity';
 import { ProductEntity } from '../product/product.entity';
@@ -90,14 +89,14 @@ export class OrderEntity {
     type: 'timestamp',
   })
   created_at: Date;
-  created_at_object?: dateType;
+  created_at_object?: number;
 
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp',
   })
   updated_at: Date;
-  updated_at_object?: dateType;
+  updated_at_object?: number;
 
   @DeleteDateColumn({
     name: 'deleted_at',
@@ -107,22 +106,8 @@ export class OrderEntity {
   deleted_at: Date;
 
   @AfterLoad()
-  transformDate() {
-    this.created_at_object = {
-      day: this.created_at.getDay(),
-      month: this.created_at.getMonth(),
-      year: this.created_at.getFullYear(),
-      hour: this.created_at.getHours(),
-      minute: this.created_at.getMinutes(),
-      second: this.created_at.getSeconds(),
-    };
-    this.updated_at_object = {
-      day: this.updated_at.getDay(),
-      month: this.updated_at.getMonth(),
-      year: this.updated_at.getFullYear(),
-      hour: this.updated_at.getHours(),
-      minute: this.updated_at.getMinutes(),
-      second: this.updated_at.getSeconds(),
-    };
+  private transformDate() {
+    this.created_at_object = this.created_at.getTime();
+    this.updated_at_object = this.updated_at.getTime();
   }
 }
