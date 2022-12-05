@@ -1,16 +1,19 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 
-import { UpdateResult } from 'typeorm';
+import { DeepPartial, UpdateResult } from 'typeorm';
 import { from, map, Observable, mergeMap, of, forkJoin } from 'rxjs';
 
 import { response } from '@ecomm/interfaces';
+import { CreateExtra } from '@ecomm/dtos/extras';
 import { Create, Update } from '@ecomm/dtos/product';
 import { CategoryEntityService } from '@database/models/category';
+import { ExtraEntity, ExtraEntityService } from '@database/models/extra';
 import { ProductEntityService, ProductEntity } from '@database/models/product';
 
 @Injectable()
 export class ProductService {
   constructor(
+    private _extraEntityService: ExtraEntityService,
     private _productEntityService: ProductEntityService,
     private _categoryEntityService: CategoryEntityService,
   ) {}
@@ -56,30 +59,18 @@ export class ProductService {
     const { description, image_src, name, offer, price, stock, category_id } =
       createBody;
     return from(this._categoryEntityService.findOne(category_id)).pipe(
-      mergeMap((category) =>
-        category
-          ? from(
-              this._productEntityService.create({
-                name,
-                offer,
-                price,
-                stock,
-                image_src,
-                description,
-                category,
-              }),
-            )
-          : from(
-              this._productEntityService.create({
-                name,
-                offer,
-                price,
-                stock,
-                image_src,
-                description,
-              }),
-            ),
-      ),
+      mergeMap((category) => {
+        const newProduct: DeepPartial<ProductEntity> = {
+          name,
+          offer,
+          price,
+          stock,
+          image_src,
+          description,
+        };
+        if (category) newProduct['category'] = category;
+        return from(this._productEntityService.create(newProduct));
+      }),
       map<ProductEntity, response>((response) => ({
         status: HttpStatus.CREATED,
         message: response?.category
@@ -124,6 +115,30 @@ export class ProductService {
       ),
     );
   }
+
+  addExtras(
+    createExtrasBody: CreateExtra,
+    product_id: number,
+  ): Observable<response> {
+    const { image_src, key, price_variation, stock } = createExtrasBody;
+    return from(
+      this._extraEntityService.create({
+        key,
+        stock,
+        image_src,
+        product_id,
+        price_variation,
+      }),
+    ).pipe(
+      map<ExtraEntity, response>((variation) => ({
+        status: HttpStatus.CREATED,
+        message: `variation created`,
+        response: variation,
+      })),
+    );
+  }
+
+  updateExtras() {}
 
   delete(id: number): Observable<response> {
     return from(this._productEntityService.findOne(id)).pipe(
