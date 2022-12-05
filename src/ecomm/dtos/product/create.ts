@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { CreateExtra } from '../extras/create';
 import {
   Max,
   Min,
@@ -5,6 +7,8 @@ import {
   IsNumber,
   IsDefined,
   IsOptional,
+  ValidateNested,
+  ArrayMinSize,
 } from 'class-validator';
 
 export class Create {
@@ -39,4 +43,10 @@ export class Create {
   @IsNumber()
   @Min(1)
   category_id: number;
+
+  @IsOptional()
+  @ArrayMinSize(1)
+  @ValidateNested()
+  @Type(() => CreateExtra)
+  products: CreateExtra[];
 }
