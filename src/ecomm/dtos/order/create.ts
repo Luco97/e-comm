@@ -9,6 +9,7 @@ import {
   ArrayMinSize,
   ArrayNotEmpty,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -41,6 +42,10 @@ export class Product {
   @IsDefined()
   @IsInt()
   product_id: number;
+
+  @IsOptional()
+  @IsInt()
+  extra_id: number = 0;
 
   @IsDefined()
   @IsInt()
