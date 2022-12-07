@@ -73,6 +73,7 @@ export class ProductEntityService {
   findAllByIds(productIds: number[]): Promise<ProductEntity[]> {
     return this._productRepo
       .createQueryBuilder('product')
+      .leftJoinAndSelect('product.extras', 'extra')
       .where('product.id IN (:...productIds)', { productIds })
       .getMany();
   }
