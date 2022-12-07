@@ -88,31 +88,59 @@ export class OrderService {
     return from(this._productEntityService.findAllByIds(productIds)).pipe(
       map((data) => {
         const productsCart: ProductJSON = data.reduce<ProductJSON>(
-          (acc, curr) => {
-            return {
-              ...acc,
-              [curr.id]: {
-                value: curr.price,
-                discount: curr.offer,
-                quantity: createOrder.products.find(
-                  (cart_product) => (curr.id = cart_product.product_id),
-                ).quantity,
-              },
-            };
+          (acc, { ...curr }) => {
+            if (!curr.extras.length)
+              return {
+                ...acc,
+                [curr.id]: {
+                  value: curr.price,
+                  discount: curr.offer,
+                  quantity: createOrder.products.find(
+                    (cart_product) => curr.id == cart_product.product_id,
+                  ).quantity,
+                },
+              };
+            else
+              return {
+                ...acc,
+                [curr.id]: {
+                  value: curr.price,
+                  discount: curr.offer,
+                  quantity: createOrder.products.find(
+                    (cart_product) => (curr.id = cart_product.product_id),
+                  ).quantity,
+                  variation:
+                    curr.extras.find(
+                      (extra) =>
+                        extra.id ==
+                        createOrder.products.find(
+                          (cart_product) => (curr.id = cart_product.product_id),
+                        ).extra_id,
+                    ).key || 'none',
+                },
+              };
           },
           {},
         );
+
         const ifExist = productIds.findIndex(
           (element) => !data.find((product) => product.id == element),
         );
         const ifStock =
-          ifExist < 0
-            ? data.findIndex(
-                (product) =>
-                  product?.stock - productsCart[`${product?.id}`].quantity < 0,
-              )
-            : -1;
-        return ifExist < 0 && ifStock < 0
+          data.find((product) => {
+            if (!product.extras.length)
+              return (
+                product.stock - productsCart[`${product?.id}`].quantity < 0
+              );
+            else
+              return (
+                (product.extras.find(
+                  (variation) =>
+                    variation.key == productsCart[`${product?.id}`].variation,
+                )?.stock || 0) - productsCart[`${product?.id}`].quantity
+              );
+          })?.id || -1;
+        return ifStock < 0
           ? {
               products: data,
               message: 'conditions accepted',
@@ -121,10 +149,7 @@ export class OrderService {
             }
           : {
               products: [],
-              message:
-                ifExist < 0
-                  ? `quantity of product with id = '${createOrder.products[ifStock].product_id}' is greater than the stock avalible`
-                  : `product with id = '${createOrder.products[ifExist].product_id}' doesn't exist`,
+              message: `quantity of product with id = '${ifStock}' is greater than the stock avalible`,
               details: productsCart,
               extra: productIds,
             };
@@ -132,7 +157,7 @@ export class OrderService {
       mergeMap(({ products, message, details, extra }) => {
         if (products.length) {
           products.forEach((product, index) => {
-            createOrder.products[index].quantity =
+            product.stock =
               product.stock - createOrder.products[index].quantity;
           });
           return from(this._productEntityService.updateAll(products)).pipe(
