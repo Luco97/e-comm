@@ -6,5 +6,5 @@ interface meta {
   value: number;
   quantity: number;
   discount: number;
-  variation: string;
+  variation?: string;
 }
