@@ -45,7 +45,7 @@ export class Product {
 
   @IsOptional()
   @IsInt()
-  extra_id: number = 0;
+  extra_id: number;
 
   @IsDefined()
   @IsInt()
