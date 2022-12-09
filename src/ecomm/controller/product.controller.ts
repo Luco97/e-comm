@@ -15,6 +15,7 @@ import {
 import { tap } from 'rxjs';
 import { Response } from 'express';
 
+import { CreateExtra, UpdateExtra } from '@ecomm/dtos/extras';
 import { RoleGuard } from '../../guards/role.guard';
 import { Create, Update } from '@ecomm/dtos/product';
 import { response } from '../interfaces/response.interface';
@@ -105,4 +106,22 @@ export class ProductController {
       .pipe(tap((data) => resp.status(data.status).json(data)))
       .subscribe();
   }
+
+  @Post(':id/extras')
+  @SetMetadata('roles', ['admin'])
+  @UseGuards(RoleGuard)
+  addExtras(
+    @Param('id', ParseIntPipe) product_id: number,
+    @Body() createBody: CreateExtra,
+    @Res() resp: Response<response>,
+  ) {}
+
+  @Put(':id/extras')
+  @SetMetadata('roles', ['admin'])
+  @UseGuards(RoleGuard)
+  updateExtras(
+    @Param('id', ParseIntPipe) product_id: number,
+    @Body() createBody: UpdateExtra,
+    @Res() resp: Response<response>,
+  ) {}
 }
