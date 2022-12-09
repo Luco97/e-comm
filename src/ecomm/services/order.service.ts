@@ -107,16 +107,17 @@ export class OrderService {
                   value: curr.price,
                   discount: curr.offer,
                   quantity: createOrder.products.find(
-                    (cart_product) => (curr.id = cart_product.product_id),
+                    (cart_product) => curr.id == cart_product.product_id,
                   ).quantity,
                   variation:
                     curr.extras.find(
                       (extra) =>
                         extra.id ==
-                        createOrder.products.find(
-                          (cart_product) => (curr.id = cart_product.product_id),
-                        ).extra_id,
-                    ).key || 'none',
+                          createOrder.products.find(
+                            (cart_product) =>
+                              curr.id == cart_product.product_id,
+                          )?.extra_id || 0,
+                    )?.key || 'none',
                 },
               };
           },
@@ -129,36 +130,46 @@ export class OrderService {
         const ifStock =
           data.find((product) => {
             if (!product.extras.length)
-              return (
-                product.stock - productsCart[`${product?.id}`].quantity < 0
-              );
+              return product.stock - productsCart[`${product.id}`].quantity < 0;
             else
               return (
                 (product.extras.find(
                   (variation) =>
-                    variation.key == productsCart[`${product?.id}`].variation,
-                )?.stock || 0) - productsCart[`${product?.id}`].quantity
+                    variation.key == productsCart[`${product.id}`].variation, // en caso de tener variacion (talla, color, modelo, etc...)
+                )?.stock || 0) -
+                  productsCart[`${product?.id}`].quantity <
+                0
               );
           })?.id || -1;
-        return ifStock < 0
-          ? {
-              products: data,
-              message: 'conditions accepted',
-              details: productsCart,
-              extra: productIds,
-            }
-          : {
-              products: [],
-              message: `quantity of product with id = '${ifStock}' is greater than the stock avalible`,
-              details: productsCart,
-              extra: productIds,
-            };
+        // en ifStock se guarda id de producto sin stock
+        if (ifStock < 0)
+          return {
+            products: data,
+            message: 'conditions accepted',
+            details: productsCart,
+            extra: productIds,
+          };
+        else
+          return {
+            products: [],
+            message: `quantity of product with id = '${ifStock}' is greater than the stock avalible`,
+            details: productsCart,
+            extra: productIds,
+          };
       }),
       mergeMap(({ products, message, details, extra }) => {
         if (products.length) {
           products.forEach((product, index) => {
-            product.stock =
-              product.stock - createOrder.products[index].quantity;
+            if (!product.extras.length)
+              product.stock = product.stock - details[index].quantity;
+            else {
+              let extraStockIndex: number = product.extras.findIndex(
+                (variation) => variation.key == details[product.id].variation,
+              );
+              product.extras[extraStockIndex].stock =
+                product.extras[extraStockIndex].stock -
+                details[product.id].quantity;
+            }
           });
           return from(this._productEntityService.updateAll(products)).pipe(
             map((products) => {
