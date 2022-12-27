@@ -74,7 +74,10 @@ export class ProductEntity {
   })
   category: CategoryEntity;
 
-  @OneToMany(() => ExtraEntity, (extras) => extras.product, { nullable: true })
+  @OneToMany(() => ExtraEntity, (extras) => extras.product, {
+    nullable: true,
+    cascade: true,
+  })
   extras: ExtraEntity[];
 
   @CreateDateColumn({
