@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ProductEntity } from '../product/product.entity';
 
-@Entity()
+@Entity({ name: 'variation' })
 export class ExtraEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
