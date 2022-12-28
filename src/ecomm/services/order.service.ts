@@ -161,7 +161,7 @@ export class OrderService {
         if (products.length) {
           products.forEach((product, index) => {
             if (!product.extras.length)
-              product.stock = product.stock - details[index].quantity;
+              product.stock = product.stock - details[product.id].quantity;
             else {
               let extraStockIndex: number = product.extras.findIndex(
                 (variation) => variation.key == details[product.id].variation,
