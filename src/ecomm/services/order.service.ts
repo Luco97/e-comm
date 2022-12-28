@@ -4,6 +4,7 @@ import { from, Observable, forkJoin, map, mergeMap, of } from 'rxjs';
 
 import { Create } from '@ecomm/dtos/order';
 import { UtilsService } from '@shared/auth';
+import { ExtraEntity } from '@database/models/extra';
 import { ProductJSON, response } from '@ecomm/interfaces';
 import { RoleEntityService } from '@database/models/role';
 import { OrderEntity, OrderEntityService } from '@database/models/order';
@@ -100,7 +101,14 @@ export class OrderService {
                   ).quantity,
                 },
               };
-            else
+            else {
+              const extraValues: ExtraEntity = curr.extras.find(
+                (extra) =>
+                  extra.id ==
+                    createOrder.products.find(
+                      (cart_product) => curr.id == cart_product.product_id,
+                    )?.extra_id || 0,
+              );
               return {
                 ...acc,
                 [curr.id]: {
@@ -109,17 +117,13 @@ export class OrderService {
                   quantity: createOrder.products.find(
                     (cart_product) => curr.id == cart_product.product_id,
                   ).quantity,
-                  variation:
-                    curr.extras.find(
-                      (extra) =>
-                        extra.id ==
-                          createOrder.products.find(
-                            (cart_product) =>
-                              curr.id == cart_product.product_id,
-                          )?.extra_id || 0,
-                    )?.key || 'none',
+                  variation: {
+                    key: extraValues?.key || 'something',
+                    value: extraValues?.value || 'none',
+                  },
                 },
               };
+            }
           },
           {},
         );
@@ -135,7 +139,8 @@ export class OrderService {
               return (
                 (product.extras.find(
                   (variation) =>
-                    variation.key == productsCart[`${product.id}`].variation, // en caso de tener variacion (talla, color, modelo, etc...)
+                    variation.key ==
+                    productsCart[`${product.id}`].variation.key, // en caso de tener variacion (talla, color, modelo, etc...)
                 )?.stock || 0) -
                   productsCart[`${product?.id}`].quantity <
                 0
@@ -164,7 +169,8 @@ export class OrderService {
               product.stock = product.stock - details[product.id].quantity;
             else {
               let extraStockIndex: number = product.extras.findIndex(
-                (variation) => variation.key == details[product.id].variation,
+                (variation) =>
+                  variation.key == details[product.id].variation.key,
               );
               product.extras[extraStockIndex].stock =
                 product.extras[extraStockIndex].stock -
