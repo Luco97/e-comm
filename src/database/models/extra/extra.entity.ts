@@ -11,6 +11,14 @@ export class ExtraEntity {
 
   @Column({
     type: 'varchar',
+    length: '20',
+    nullable: true,
+    default: 'waka-waka',
+  })
+  value: string;
+
+  @Column({
+    type: 'varchar',
     nullable: true,
   })
   image_src: string;
