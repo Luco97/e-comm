@@ -16,6 +16,12 @@ export class CategoryEntity {
   })
   name: string;
 
+  @Column({
+    name: 'icon',
+    nullable: true,
+  })
+  icon: string;
+
   @OneToMany(() => ProductEntity, (products) => products.category)
   products: ProductEntity[];
 }
