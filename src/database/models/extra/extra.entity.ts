@@ -12,8 +12,7 @@ export class ExtraEntity {
   @Column({
     type: 'varchar',
     length: '20',
-    nullable: true,
-    default: 'waka-waka',
+    default: 'define value',
   })
   value: string;
 
