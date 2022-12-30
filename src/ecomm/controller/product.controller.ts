@@ -114,7 +114,12 @@ export class ProductController {
     @Param('id', ParseIntPipe) product_id: number,
     @Body() createBody: CreateExtra,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._productService
+      .addExtras(createBody, product_id)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 
   @Put(':id/extras')
   @SetMetadata('roles', ['admin'])
