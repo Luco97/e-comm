@@ -121,20 +121,30 @@ export class ProductService {
     product_id: number,
   ): Observable<response> {
     const { image_src, key, price_variation, stock } = createExtrasBody;
-    return from(
-      this._extraEntityService.create({
-        key,
-        stock,
-        image_src,
-        product_id,
-        price_variation,
+    return from(this._productEntityService.findOne(product_id)).pipe(
+      mergeMap((product) => {
+        if (!product)
+          return of<response>({
+            status: HttpStatus.NOT_FOUND,
+            message: `product with id = '${product_id}' doesn't exist`,
+          });
+        else
+          return from(
+            this._extraEntityService.create({
+              key,
+              stock,
+              image_src,
+              product_id,
+              price_variation,
+            }),
+          ).pipe(
+            map<ExtraEntity, response>((variation) => ({
+              status: HttpStatus.CREATED,
+              message: `variation created`,
+              response: variation,
+            })),
+          );
       }),
-    ).pipe(
-      map<ExtraEntity, response>((variation) => ({
-        status: HttpStatus.CREATED,
-        message: `variation created`,
-        response: variation,
-      })),
     );
   }
 
