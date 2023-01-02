@@ -51,11 +51,9 @@ export class ExtraEntityService {
     key?: string;
     stock?: number;
     price_variation?: number;
-    product_id: number;
     image_src?: string;
   }): Promise<UpdateResult> {
-    const { id, price_variation, product_id, image_src, key, stock } =
-      parameters;
+    const { id, price_variation, image_src, key, stock } = parameters;
     const updateItems: QueryDeepPartialEntity<ExtraEntity> = {};
 
     if (key) updateItems['key'] = key;
