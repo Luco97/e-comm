@@ -4,7 +4,7 @@ import { DeepPartial, UpdateResult } from 'typeorm';
 import { from, map, Observable, mergeMap, of, forkJoin } from 'rxjs';
 
 import { response } from '@ecomm/interfaces';
-import { CreateExtra } from '@ecomm/dtos/extras';
+import { CreateExtra, UpdateExtra } from '@ecomm/dtos/extras';
 import { Create, Update } from '@ecomm/dtos/product';
 import { CategoryEntityService } from '@database/models/category';
 import { ExtraEntity, ExtraEntityService } from '@database/models/extra';
@@ -148,7 +148,40 @@ export class ProductService {
     );
   }
 
-  updateExtras() {}
+  updateExtras(
+    product_id: number,
+    extra_id: number,
+    updateBody: UpdateExtra,
+  ): Observable<response> {
+    const { image_src, key, price_variation, stock } = updateBody;
+
+    return from(
+      this._extraEntityService.findOne({ extra_id, product_id }),
+    ).pipe(
+      mergeMap((extra) => {
+        if (!extra)
+          return of<response>({
+            status: HttpStatus.OK,
+            message: `No extra found`,
+          });
+        else
+          return from(
+            this._extraEntityService.update({
+              id: extra_id,
+              image_src,
+              key,
+              price_variation,
+              stock,
+            }),
+          ).pipe(
+            map<UpdateResult, response>((a) => ({
+              status: HttpStatus.OK,
+              message: `No extra found`,
+            })),
+          );
+      }),
+    );
+  }
 
   delete(id: number): Observable<response> {
     return from(this._productEntityService.findOne(id)).pipe(
