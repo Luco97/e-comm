@@ -32,6 +32,20 @@ export class ExtraEntityService {
     return this._extraRepo.save(new_extra);
   }
 
+  findOne(parameters: {
+    product_id: number;
+    extra_id: number;
+  }): Promise<ExtraEntity> {
+    const { extra_id, product_id } = parameters;
+
+    return this._extraRepo
+      .createQueryBuilder('extra')
+      .leftJoin('extra.product', 'product')
+      .where('extra.id = :extra_id', { extra_id })
+      .andWhere('product.id = :product_id', { product_id })
+      .getOne();
+  }
+
   update(parameters: {
     id: number;
     key?: string;
