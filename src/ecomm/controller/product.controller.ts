@@ -121,12 +121,18 @@ export class ProductController {
       .subscribe();
   }
 
-  @Put(':id/extras')
+  @Put(':id/extras/:extra_id')
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   updateExtras(
     @Param('id', ParseIntPipe) product_id: number,
-    @Body() createBody: UpdateExtra,
+    @Param('extra_id', ParseIntPipe) extra_id: number,
+    @Body() updateBody: UpdateExtra,
     @Res() resp: Response<response>,
-  ) {}
+  ) {
+    this._productService
+      .updateExtras(product_id, extra_id, updateBody)
+      .pipe(tap((data) => resp.status(data.status).json(data)))
+      .subscribe();
+  }
 }
