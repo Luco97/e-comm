@@ -111,16 +111,6 @@ export class OrderController {
     @Body() createBody: Create,
     @Res() resp: Response<response>,
   ) {
-    // this._ordersService
-    //   .processProducts(createBody)
-    //   .pipe(
-    //     tap((data) =>
-    //       resp
-    //         .status(200)
-    //         .json({ status: 200, message: 'testing', response: data }),
-    //     ),
-    //   )
-    //   .subscribe((data) => console.log(data));
     this._ordersService
       .processProducts(createBody)
       .pipe(
