@@ -11,7 +11,7 @@ import {
 
 import { ProductJSON } from '@ecomm/interfaces';
 import { UserEntity } from '../user/user.entity';
-import { ProductEntity } from '../product/product.entity';
+import { ExtraEntity } from '../extra';
 
 @Entity({
   name: 'order',
@@ -80,8 +80,8 @@ export class OrderEntity {
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user: UserEntity;
 
-  @ManyToMany(() => ProductEntity, (products) => products.orders)
-  products: ProductEntity[];
+  @ManyToMany(() => ExtraEntity, (variation) => variation.orders)
+  products: ExtraEntity[];
 
   @CreateDateColumn({
     name: 'created_at',

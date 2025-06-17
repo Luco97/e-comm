@@ -14,20 +14,37 @@ export class ExtraEntityService {
   }
 
   create(parameters: {
-    key: string;
-    stock: number;
     product_id: number;
-    image_src?: string;
-    price_variation?: number;
+    name: string;
+    url: string;
+    stock: number;
+    image_src?: string[];
+    price?: number;
+    description?: string;
+    order?: number;
   }): Promise<ExtraEntity> {
-    const { key, stock, image_src, price_variation, product_id } = parameters;
+    const {
+      name,
+      description,
+      stock,
+      image_src,
+      url,
+      product_id,
+      price,
+      order,
+    } = parameters;
 
     const new_extra = this._extraRepo.create({
-      key,
+      name,
       image_src,
-      price_variation,
+      url,
+      description,
+      price,
       stock,
+      order,
       product: { id: product_id },
+      // porcentaje no debe ser seteado al crear variacion
+      percent_discount: 0,
     });
     return this._extraRepo.save(new_extra);
   }
@@ -35,31 +52,55 @@ export class ExtraEntityService {
   findOne(parameters: {
     product_id: number;
     extra_id: number;
+    url: number;
   }): Promise<ExtraEntity> {
-    const { extra_id, product_id } = parameters;
+    const { extra_id, product_id, url } = parameters;
 
     return this._extraRepo
       .createQueryBuilder('extra')
       .leftJoin('extra.product', 'product')
-      .where('extra.id = :extra_id', { extra_id })
-      .andWhere('product.id = :product_id', { product_id })
+      .where('product.id = :product_id', { product_id })
+      .andWhere((qb) =>
+        qb
+          .where('extra.id = :extra_id', { extra_id })
+          .orWhere('extra.url = :url', { url }),
+      )
       .getOne();
   }
 
   update(parameters: {
     id: number;
-    key?: string;
-    stock?: number;
-    price_variation?: number;
-    image_src?: string;
+    name: string;
+    url: string;
+    stock: number;
+    image_src?: string[];
+    price?: number;
+    description?: string;
+    order?: number;
+    percent_discount?: number;
   }): Promise<UpdateResult> {
-    const { id, price_variation, image_src, key, stock } = parameters;
+    const {
+      id,
+      name,
+      description,
+      stock,
+      image_src,
+      url,
+      price,
+      order,
+      percent_discount,
+    } = parameters;
     const updateItems: QueryDeepPartialEntity<ExtraEntity> = {};
 
-    if (key) updateItems['key'] = key;
+    if (name) updateItems['name'] = name;
+    if (description) updateItems['description'] = description;
     if (stock) updateItems['stock'] = stock;
+    if (url) updateItems['url'] = url;
+    if (price) updateItems['price'] = price;
+    if (order) updateItems['order'] = order;
+    if (percent_discount) updateItems['percent_discount'] = percent_discount;
+    // IMAGENES YA LLEGAN CON URL DE CLOUDINARY
     if (image_src) updateItems['image_src'] = image_src;
-    if (price_variation) updateItems['price_variation'] = price_variation;
 
     return this._extraRepo.update(
       {
