@@ -7,24 +7,33 @@ import {
   IsOptional,
   IsDefined,
   MaxLength,
+  IsArray,
 } from 'class-validator';
 
 export class CreateExtra {
   @IsDefined()
-  @IsString()
-  @MaxLength(20)
-  key: string;
+  name: string;
+
+  @IsDefined()
+  url: string;
 
   @IsOptional()
-  @IsUrl()
-  image_src: string;
+  description?: string;
+
+  @IsOptional()
+  @IsArray()
+  image_src?: string[];
+
+  // image_src: string;
+
+  @IsOptional()
+  order?: number;
 
   @IsOptional()
   @IsNumber()
-  @Max(1)
   price_variation: number;
 
-  @IsDefined()
+  @IsOptional()
   @IsNumber()
   @Min(0)
   stock: number;
