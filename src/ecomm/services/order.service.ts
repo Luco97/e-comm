@@ -86,116 +86,118 @@ export class OrderService {
       (element) => element.product_id,
     );
 
-    return from(this._productEntityService.findAllByIds(productIds)).pipe(
-      map((data) => {
-        const productsCart: ProductJSON = data.reduce<ProductJSON>(
-          (acc, { ...curr }) => {
-            if (!curr.extras.length)
-              return {
-                ...acc,
-                [curr.id]: {
-                  value: curr.price,
-                  discount: curr.offer,
-                  quantity: createOrder.products.find(
-                    (cart_product) => curr.id == cart_product.product_id,
-                  ).quantity,
-                },
-              };
-            else {
-              const extraValues: ExtraEntity = curr.extras.find(
-                (extra) =>
-                  extra.id ==
-                    createOrder.products.find(
-                      (cart_product) => curr.id == cart_product.product_id,
-                    )?.extra_id || 0,
-              );
-              return {
-                ...acc,
-                [curr.id]: {
-                  value: curr.price,
-                  discount: curr.offer,
-                  quantity: createOrder.products.find(
-                    (cart_product) => curr.id == cart_product.product_id,
-                  ).quantity,
-                  variation: {
-                    key: extraValues?.key || 'something',
-                    value: extraValues?.value || 'none',
-                  },
-                },
-              };
-            }
-          },
-          {},
-        );
+    // return from(this._productEntityService.findAllByIds(productIds)).pipe(
+    //   map((data) => {
+    //     const productsCart: ProductJSON = data.reduce<ProductJSON>(
+    //       (acc, { ...curr }) => {
+    //         if (!curr.extras.length)
+    //           return {
+    //             ...acc,
+    //             [curr.id]: {
+    //               value: curr.price,
+    //               discount: curr.offer,
+    //               quantity: createOrder.products.find(
+    //                 (cart_product) => curr.id == cart_product.product_id,
+    //               ).quantity,
+    //             },
+    //           };
+    //         else {
+    //           const extraValues: ExtraEntity = curr.extras.find(
+    //             (extra) =>
+    //               extra.id ==
+    //                 createOrder.products.find(
+    //                   (cart_product) => curr.id == cart_product.product_id,
+    //                 )?.extra_id || 0,
+    //           );
+    //           return {
+    //             ...acc,
+    //             [curr.id]: {
+    //               value: curr.price,
+    //               discount: curr.offer,
+    //               quantity: createOrder.products.find(
+    //                 (cart_product) => curr.id == cart_product.product_id,
+    //               ).quantity,
+    //               variation: {
+    //                 key: extraValues?.key || 'something',
+    //                 value: extraValues?.value || 'none',
+    //               },
+    //             },
+    //           };
+    //         }
+    //       },
+    //       {},
+    //     );
 
-        const ifExist = productIds.findIndex(
-          (element) => !data.find((product) => product.id == element),
-        );
-        const ifStock =
-          data.find((product) => {
-            if (!product.extras.length)
-              return product.stock - productsCart[`${product.id}`].quantity < 0;
-            else
-              return (
-                (product.extras.find(
-                  (variation) =>
-                    variation.key ==
-                    productsCart[`${product.id}`].variation.key, // en caso de tener variacion (talla, color, modelo, etc...)
-                )?.stock || 0) -
-                  productsCart[`${product?.id}`].quantity <
-                0
-              );
-          })?.id || -1;
-        // en ifStock se guarda id de producto sin stock
-        if (ifStock < 0)
-          return {
-            products: data,
-            message: 'conditions accepted',
-            details: productsCart,
-            extra: productIds,
-          };
-        else
-          return {
-            products: [],
-            message: `quantity of product with id = '${ifStock}' is greater than the stock avalible`,
-            details: productsCart,
-            extra: productIds,
-          };
-      }),
-      mergeMap(({ products, message, details, extra }) => {
-        if (products.length) {
-          products.forEach((product, index) => {
-            if (!product.extras.length)
-              product.stock = product.stock - details[product.id].quantity;
-            else {
-              let extraStockIndex: number = product.extras.findIndex(
-                (variation) =>
-                  variation.key == details[product.id].variation.key,
-              );
-              product.extras[extraStockIndex].stock =
-                product.extras[extraStockIndex].stock -
-                details[product.id].quantity;
-            }
-          });
-          return from(this._productEntityService.updateAll(products)).pipe(
-            map((products) => {
-              return { products, message, details, extra };
-            }),
-          );
-        } else return of({ products, message, details, extra });
-      }),
-    );
+    //     const ifExist = productIds.findIndex(
+    //       (element) => !data.find((product) => product.id == element),
+    //     );
+    //     const ifStock =
+    //       data.find((product) => {
+    //         if (!product.extras.length)
+    //           return product.stock - productsCart[`${product.id}`].quantity < 0;
+    //         else
+    //           return (
+    //             (product.extras.find(
+    //               (variation) =>
+    //                 variation.key ==
+    //                 productsCart[`${product.id}`].variation.key, // en caso de tener variacion (talla, color, modelo, etc...)
+    //             )?.stock || 0) -
+    //               productsCart[`${product?.id}`].quantity <
+    //             0
+    //           );
+    //       })?.id || -1;
+    //     // en ifStock se guarda id de producto sin stock
+    //     if (ifStock < 0)
+    //       return {
+    //         products: data,
+    //         message: 'conditions accepted',
+    //         details: productsCart,
+    //         extra: productIds,
+    //       };
+    //     else
+    //       return {
+    //         products: [],
+    //         message: `quantity of product with id = '${ifStock}' is greater than the stock avalible`,
+    //         details: productsCart,
+    //         extra: productIds,
+    //       };
+    //   }),
+    //   mergeMap(({ products, message, details, extra }) => {
+    //     if (products.length) {
+    //       products.forEach((product, index) => {
+    //         if (!product.extras.length)
+    //           product.stock = product.stock - details[product.id].quantity;
+    //         else {
+    //           let extraStockIndex: number = product.extras.findIndex(
+    //             (variation) =>
+    //               variation.key == details[product.id].variation.key,
+    //           );
+    //           product.extras[extraStockIndex].stock =
+    //             product.extras[extraStockIndex].stock -
+    //             details[product.id].quantity;
+    //         }
+    //       });
+    //       return from(this._productEntityService.updateAll(products)).pipe(
+    //         map((products) => {
+    //           return { products, message, details, extra };
+    //         }),
+    //       );
+    //     } else return of({ products, message, details, extra });
+    //   }),
+    // );
+    return of({ products: [] });
   }
 
   createOrder(
     token: string,
     createOrder: Create,
-    process: {
-      products: ProductEntity[];
-      message: string;
-      details: ProductJSON;
-      extra?: number[];
-    },
+    process: any,
+    //  {
+    //   products: ExtraEntity[];
+    //   message: string;
+    //   details: ProductJSON;
+    //   extra?: number[];
+    // },
   ): Observable<response> {
     const { address, city, council, latitude, longitude } = createOrder;
     const { details, message, products, extra } = process;
@@ -221,7 +223,9 @@ export class OrderService {
       ).pipe(
         mergeMap((order) => {
           products.forEach((product) => {
-            order.cost += product.price - product.price * product.offer;
+            order.cost += Math.floor(
+              product.price - product.price * product.percent_discount,
+            );
           });
           return from(this._orderEntityService.update(order));
         }),
