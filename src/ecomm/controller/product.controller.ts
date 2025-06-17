@@ -107,7 +107,7 @@ export class ProductController {
       .subscribe();
   }
 
-  @Post(':id/extras')
+  @Post(':id/variation')
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   addExtras(
@@ -121,7 +121,7 @@ export class ProductController {
       .subscribe();
   }
 
-  @Put(':id/extras/:extra_id')
+  @Put(':id/variation/:extra_id')
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   updateExtras(

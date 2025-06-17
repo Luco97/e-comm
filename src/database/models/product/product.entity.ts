@@ -13,6 +13,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { BrandingEntity } from '../branding';
 
 @Entity({
   name: 'product',
@@ -64,15 +65,17 @@ export class ProductEntity {
   })
   name: string;
 
-  @ManyToMany(() => OrderEntity, (orders) => orders.products)
-  @JoinTable()
-  orders: OrderEntity[];
-
   @ManyToOne(() => CategoryEntity, (category) => category.products, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   category: CategoryEntity;
+
+  @ManyToOne(() => BrandingEntity, (branding) => branding.products, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  branding: BrandingEntity;
 
   @OneToMany(() => ExtraEntity, (extras) => extras.product, {
     nullable: true,

@@ -120,32 +120,34 @@ export class ProductService {
     createExtrasBody: CreateExtra,
     product_id: number,
   ): Observable<response> {
-    const { image_src, key, price_variation, stock } = createExtrasBody;
-    return from(this._productEntityService.findOne(product_id)).pipe(
-      mergeMap((product) => {
-        if (!product)
-          return of<response>({
-            status: HttpStatus.NOT_FOUND,
-            message: `product with id = '${product_id}' doesn't exist`,
-          });
-        else
-          return from(
-            this._extraEntityService.create({
-              key,
-              stock,
-              image_src,
-              product_id,
-              price_variation,
-            }),
-          ).pipe(
-            map<ExtraEntity, response>((variation) => ({
-              status: HttpStatus.CREATED,
-              message: `variation created`,
-              response: variation,
-            })),
-          );
-      }),
-    );
+    const { name, price_variation, stock, url, description, image_src, order } =
+      createExtrasBody;
+    // return from(this._productEntityService.findOne(product_id)).pipe(
+    //   mergeMap((product) => {
+    //     if (!product)
+    //       return of<response>({
+    //         status: HttpStatus.NOT_FOUND,
+    //         message: `product with id = '${product_id}' doesn't exist`,
+    //       });
+    //     else
+    //       return from(
+    //         this._extraEntityService.create({
+    //           key,
+    //           stock,
+    //           image_src,
+    //           product_id,
+    //           price_variation,
+    //         }),
+    //       ).pipe(
+    //         map<ExtraEntity, response>((variation) => ({
+    //           status: HttpStatus.CREATED,
+    //           message: `variation created`,
+    //           response: variation,
+    //         })),
+    //       );
+    //   }),
+    // );
+    return of({ status: 200 });
   }
 
   updateExtras(
@@ -155,32 +157,33 @@ export class ProductService {
   ): Observable<response> {
     const { image_src, key, price_variation, stock } = updateBody;
 
-    return from(
-      this._extraEntityService.findOne({ extra_id, product_id }),
-    ).pipe(
-      mergeMap((extra) => {
-        if (!extra)
-          return of<response>({
-            status: HttpStatus.OK,
-            message: `No extra found`,
-          });
-        else
-          return from(
-            this._extraEntityService.update({
-              id: extra_id,
-              image_src,
-              key,
-              price_variation,
-              stock,
-            }),
-          ).pipe(
-            map<UpdateResult, response>((a) => ({
-              status: HttpStatus.OK,
-              message: `No extra found`,
-            })),
-          );
-      }),
-    );
+    // return from(
+    //   this._extraEntityService.findOne({ extra_id, product_id }),
+    // ).pipe(
+    //   mergeMap((extra) => {
+    //     if (!extra)
+    //       return of<response>({
+    //         status: HttpStatus.OK,
+    //         message: `No extra found`,
+    //       });
+    //     else
+    //       return from(
+    //         this._extraEntityService.update({
+    //           id: extra_id,
+    //           image_src,
+    //           key,
+    //           price_variation,
+    //           stock,
+    //         }),
+    //       ).pipe(
+    //         map<UpdateResult, response>((a) => ({
+    //           status: HttpStatus.OK,
+    //           message: `No extra found`,
+    //         })),
+    //       );
+    //   }),
+    // );
+    return of({ status: 200 });
   }
 
   delete(id: number): Observable<response> {
