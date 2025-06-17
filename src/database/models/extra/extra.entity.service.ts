@@ -41,7 +41,7 @@ export class ExtraEntityService {
       description,
       price,
       stock,
-      order,
+      priority: order,
       product: { id: product_id },
       // porcentaje no debe ser seteado al crear variacion
       percent_discount: 0,
@@ -97,7 +97,7 @@ export class ExtraEntityService {
     if (stock) updateItems['stock'] = stock;
     if (url) updateItems['url'] = url;
     if (price) updateItems['price'] = price;
-    if (order) updateItems['order'] = order;
+    if (order) updateItems['priority'] = order;
     if (percent_discount) updateItems['percent_discount'] = percent_discount;
     // IMAGENES YA LLEGAN CON URL DE CLOUDINARY
     if (image_src) updateItems['image_src'] = image_src;

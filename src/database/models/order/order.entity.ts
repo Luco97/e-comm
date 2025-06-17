@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -80,7 +81,8 @@ export class OrderEntity {
   @ManyToOne(() => UserEntity, (user) => user.orders)
   user: UserEntity;
 
-  @ManyToMany(() => ExtraEntity, (variation) => variation.orders)
+  @ManyToMany(() => ExtraEntity)
+  @JoinTable()
   products: ExtraEntity[];
 
   @CreateDateColumn({

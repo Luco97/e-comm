@@ -47,7 +47,7 @@ export class ExtraEntity {
   percent_discount: number;
 
   @Column({ type: 'int', default: 0 })
-  order: number;
+  priority: number;
 
   @Column({
     name: 'metadata',
@@ -59,7 +59,7 @@ export class ExtraEntity {
   @ManyToOne(() => ProductEntity, (product) => product.extras)
   product: ProductEntity;
 
-  @ManyToMany(() => OrderEntity, (orders) => orders.products)
-  @JoinTable()
-  orders: OrderEntity[];
+  // @ManyToMany(() => OrderEntity, (orders) => orders.products)
+  // @JoinTable()
+  // orders: OrderEntity[];
 }
