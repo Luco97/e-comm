@@ -32,32 +32,17 @@ export class ProductEntity {
   image_src: string;
 
   @Column({
-    name: 'offer',
     type: 'real',
     default: 0,
   })
-  offer: number;
+  // Si offer de variante es 0, upper_offer tiene efecto
+  upper_offer: number;
 
   @Column({
-    name: 'stock',
-    type: 'int',
-    default: 0,
-  })
-  stock: number;
-
-  @Column({
-    name: 'price',
-    type: 'real',
-    default: 0,
-  })
-  price: number;
-
-  @Column({
-    name: 'description',
     type: 'varchar',
     nullable: true,
   })
-  description: string;
+  general_description: string;
 
   @Column({
     name: 'name',

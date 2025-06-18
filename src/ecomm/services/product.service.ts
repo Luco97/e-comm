@@ -56,17 +56,14 @@ export class ProductService {
   }
 
   create(createBody: Create): Observable<response> {
-    const { description, image_src, name, offer, price, stock, category_id } =
-      createBody;
+    const { description, image_src, name, offer, category_id } = createBody;
     return from(this._categoryEntityService.findOne(category_id)).pipe(
       mergeMap((category) => {
         const newProduct: DeepPartial<ProductEntity> = {
           name,
-          offer,
-          price,
-          stock,
+          upper_offer: offer,
           image_src,
-          description,
+          general_description: description,
         };
         if (category) newProduct['category'] = category;
         return from(this._productEntityService.create(newProduct));
@@ -94,11 +91,9 @@ export class ProductService {
               this._productEntityService.update({
                 id: product.id,
                 name: name || product.name,
-                offer: offer || product.offer,
-                price: price || product.price,
-                stock: stock || product.stock,
+                upper_offer: offer || product.upper_offer,
                 image_src: image_src || product.image_src,
-                description: description || product.description,
+                general_description: description || product.general_description,
                 category: category || product.category,
               }),
             ).pipe(
