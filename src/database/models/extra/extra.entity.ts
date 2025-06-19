@@ -53,8 +53,9 @@ export class ExtraEntity {
     name: 'metadata',
     nullable: false,
     type: 'jsonb',
+    default: {},
   })
-  extras: any;
+  metadata: any;
 
   @ManyToOne(() => ProductEntity, (product) => product.extras)
   product: ProductEntity;
