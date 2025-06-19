@@ -62,7 +62,6 @@ export class ProductService {
         const newProduct: DeepPartial<ProductEntity> = {
           name,
           upper_offer: offer,
-          image_src,
           general_description: description,
         };
         if (category) newProduct['category'] = category;
@@ -92,7 +91,6 @@ export class ProductService {
                 id: product.id,
                 name: name || product.name,
                 upper_offer: offer || product.upper_offer,
-                image_src: image_src || product.image_src,
                 general_description: description || product.general_description,
                 category: category || product.category,
               }),

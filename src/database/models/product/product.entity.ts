@@ -25,13 +25,6 @@ export class ProductEntity {
   id: number;
 
   @Column({
-    name: 'image_src',
-    type: 'varchar',
-    nullable: true,
-  })
-  image_src: string;
-
-  @Column({
     type: 'real',
     default: 0,
   })
@@ -49,6 +42,14 @@ export class ProductEntity {
     type: 'varchar',
   })
   name: string;
+
+  @Column({
+    name: 'metadata',
+    nullable: true,
+    type: 'jsonb',
+    default: {},
+  })
+  metadata: any;
 
   @ManyToOne(() => CategoryEntity, (category) => category.products, {
     nullable: true,
