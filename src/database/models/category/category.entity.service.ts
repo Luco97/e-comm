@@ -25,6 +25,21 @@ export class CategoryEntityService {
       .getRawMany();
   }
 
+  findAllById(categories: number[]): Promise<CategoryEntity[]> {
+    return this._categoryRepo
+      .createQueryBuilder('category')
+      .select(['category.id AS id', 'category.name AS name'])
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(products.id)', 'products.id')
+          .from(ProductEntity, 'products')
+          .where('products.category.id = category.id');
+      }, 'count')
+      .where('category.id IN (:...categories)', { categories })
+      .orderBy('count', 'DESC')
+      .getRawMany();
+  }
+
   findOne(id: number): Promise<CategoryEntity> {
     return this._categoryRepo
       .createQueryBuilder('category')

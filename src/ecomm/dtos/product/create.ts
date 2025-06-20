@@ -9,6 +9,7 @@ import {
   IsOptional,
   ValidateNested,
   ArrayMinSize,
+  IsArray,
 } from 'class-validator';
 
 export class Create {
@@ -40,9 +41,8 @@ export class Create {
   price: number;
 
   @IsOptional()
-  @IsNumber()
-  @Min(1)
-  category_id: number;
+  @IsNumber({}, { each: true })
+  category_id: number[];
 
   @IsOptional()
   @ArrayMinSize(1)

@@ -57,21 +57,23 @@ export class ProductService {
 
   create(createBody: Create): Observable<response> {
     const { description, image_src, name, offer, category_id } = createBody;
-    return from(this._categoryEntityService.findOne(category_id)).pipe(
-      mergeMap((category) => {
+    return from(this._categoryEntityService.findAllById(category_id)).pipe(
+      mergeMap((categories) => {
         const newProduct: DeepPartial<ProductEntity> = {
           name,
           upper_offer: offer,
           general_description: description,
         };
-        if (category) newProduct['category'] = category;
+        if (categories?.length) newProduct['categories'] = categories;
         return from(this._productEntityService.create(newProduct));
       }),
       map<ProductEntity, response>((response) => ({
         status: HttpStatus.CREATED,
-        message: response?.category
-          ? `product created with category =  ${response.category.name}`
-          : 'product created',
+        message: response?.categories?.length
+          ? `product created with categories =  ${response.categories
+              .map<string>((element) => `<${element.name}>`)
+              .join('/')}`
+          : 'product created with no categories',
         response,
       })),
     );
@@ -80,11 +82,14 @@ export class ProductService {
   update(updateBody: Update, product_id: number): Observable<response> {
     const { category_id, description, image_src, name, offer, price, stock } =
       updateBody;
+
+    const dumpCategories: boolean = 'category_id' in updateBody;
+
     return forkJoin([
       from(this._productEntityService.findOne(product_id)),
-      from(this._categoryEntityService.findOne(category_id)),
+      from(this._categoryEntityService.findAllById(category_id)),
     ]).pipe(
-      mergeMap(([product, category]) =>
+      mergeMap(([product, categories]) =>
         product
           ? from(
               this._productEntityService.update({
@@ -92,7 +97,8 @@ export class ProductService {
                 name: name || product.name,
                 upper_offer: offer || product.upper_offer,
                 general_description: description || product.general_description,
-                category: category || product.category,
+                // De esta forma es posible tambien quitar (siempre y cuando se sumen)
+                categories: dumpCategories ? categories : product.categories,
               }),
             ).pipe(
               map<ProductEntity, response>((response) => ({

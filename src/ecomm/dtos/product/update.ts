@@ -29,7 +29,6 @@ export class Update {
   price: number;
 
   @IsOptional()
-  @IsNumber()
-  @Min(1)
-  category_id: number;
+  @IsNumber({}, { each: true })
+  category_id: number[];
 }
