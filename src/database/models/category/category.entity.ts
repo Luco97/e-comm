@@ -22,6 +22,6 @@ export class CategoryEntity {
   })
   icon: string;
 
-  @OneToMany(() => ProductEntity, (products) => products.category)
-  products: ProductEntity[];
+  // @OneToMany(() => ProductEntity, (products) => products.category)
+  products?: ProductEntity[];
 }

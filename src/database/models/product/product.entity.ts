@@ -51,11 +51,12 @@ export class ProductEntity {
   })
   metadata: any;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products, {
+  @ManyToMany(() => CategoryEntity, (category) => category.products, {
     nullable: true,
-    onDelete: 'SET NULL',
+    // onDelete: 'SET NULL',
   })
-  category: CategoryEntity;
+  @JoinTable()
+  categories: CategoryEntity[];
 
   @ManyToOne(() => BrandingEntity, (branding) => branding.products, {
     nullable: true,
