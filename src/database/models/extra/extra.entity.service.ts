@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Brackets, Repository, UpdateResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { ExtraEntity } from './extra.entity';
 
@@ -60,10 +60,12 @@ export class ExtraEntityService {
       .createQueryBuilder('extra')
       .leftJoin('extra.product', 'product')
       .where('product.id = :product_id', { product_id })
-      .andWhere((qb) =>
-        qb
-          .where('extra.id = :extra_id', { extra_id })
-          .orWhere('extra.url = :url', { url }),
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where('extra.id = :extra_id', { extra_id })
+            .orWhere('extra.url = :url', { url }),
+        ),
       )
       .getOne();
   }
