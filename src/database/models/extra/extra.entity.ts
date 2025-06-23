@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -63,4 +64,9 @@ export class ExtraEntity {
   // @ManyToMany(() => OrderEntity, (orders) => orders.products)
   // @JoinTable()
   // orders: OrderEntity[];
+
+  @DeleteDateColumn({
+    select: false,
+  })
+  deleted_at: Date;
 }
