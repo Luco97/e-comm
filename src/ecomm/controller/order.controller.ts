@@ -51,10 +51,10 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    this._ordersService
-      .getAllOrders(parameters, token)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._ordersService
+    //   .getAllOrders(parameters, token)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Get('admin')
@@ -83,10 +83,10 @@ export class OrderController {
       take: take,
       skip: skip,
     };
-    this._ordersService
-      .getAllOrdersAdmin(parameters, username)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._ordersService
+    //   .getAllOrdersAdmin(parameters, username)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Get(':id')
@@ -97,10 +97,10 @@ export class OrderController {
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
   ) {
-    this._ordersService
-      .getOneOrder({ token, id })
-      .pipe(tap((response) => resp.status(response.status).json(response)))
-      .subscribe();
+    // this._ordersService
+    //   .getOneOrder({ token, id })
+    //   .pipe(tap((response) => resp.status(response.status).json(response)))
+    //   .subscribe();
   }
 
   @Post()
@@ -111,17 +111,17 @@ export class OrderController {
     @Body() createBody: Create,
     @Res() resp: Response<response>,
   ) {
-    this._ordersService
-      .processProducts(createBody)
-      .pipe(
-        mergeMap((process) =>
-          this._ordersService.createOrder(token, createBody, process),
-        ),
-        tap((data) => {
-          resp.status(data.status).json(data);
-        }),
-      )
-      .subscribe();
+    // this._ordersService
+    //   .processProducts(createBody)
+    //   .pipe(
+    //     mergeMap((process) =>
+    //       this._ordersService.createOrder(token, createBody, process),
+    //     ),
+    //     tap((data) => {
+    //       resp.status(data.status).json(data);
+    //     }),
+    //   )
+    //   .subscribe();
   }
 
   @Delete(':id')
@@ -131,9 +131,9 @@ export class OrderController {
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
   ) {
-    this._ordersService
-      .deleteOrder(id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._ordersService
+    //   .deleteOrder(id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 }
