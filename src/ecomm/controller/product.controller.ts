@@ -53,10 +53,10 @@ export class ProductController {
       skip: skip,
       search: search || '',
     };
-    this._productService
-      .findAll(parameters, category_id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .findAll(parameters, category_id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Get(':id')
@@ -64,20 +64,20 @@ export class ProductController {
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
   ) {
-    this._productService
-      .findOne(id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .findOne(id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Post()
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   createProduct(@Body() createBody: Create, @Res() resp: Response<response>) {
-    this._productService
-      .create(createBody)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .create(createBody)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Put(':id')
@@ -88,10 +88,10 @@ export class ProductController {
     @Body() updateBody: Update,
     @Res() resp: Response<response>,
   ) {
-    this._productService
-      .update(updateBody, id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .update(updateBody, id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Delete(':id')
@@ -101,10 +101,10 @@ export class ProductController {
     @Param('id', ParseIntPipe) id: number,
     @Res() resp: Response<response>,
   ) {
-    this._productService
-      .delete(id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .delete(id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Post(':id/variation')
@@ -115,10 +115,10 @@ export class ProductController {
     @Body() createBody: CreateExtra,
     @Res() resp: Response<response>,
   ) {
-    this._productService
-      .addExtras(createBody, product_id)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .addExtras(createBody, product_id)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 
   @Put(':id/variation/:extra_id')
@@ -130,9 +130,9 @@ export class ProductController {
     @Body() updateBody: UpdateExtra,
     @Res() resp: Response<response>,
   ) {
-    this._productService
-      .updateExtras(product_id, extra_id, updateBody)
-      .pipe(tap((data) => resp.status(data.status).json(data)))
-      .subscribe();
+    // this._productService
+    //   .updateExtras(product_id, extra_id, updateBody)
+    //   .pipe(tap((data) => resp.status(data.status).json(data)))
+    //   .subscribe();
   }
 }
